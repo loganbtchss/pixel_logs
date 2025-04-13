@@ -1,47 +1,52 @@
 # Pixel Logs
+This is an advanced Discord logging system for FiveM and RedM servers, providing comprehensive logging capabilities with a clean and modern interface.
 
-An advanced Discord logging system for FiveM and RedM servers, providing comprehensive logging capabilities with a clean and modern interface.
+## 🚀 Features
 
-## Features
+### 📝 Event Logging
+- Player joins/leaves with detailed information
+- Chat messages with channel tracking
+- Player deaths with location and weapon details
+- Command usage with arguments
+- Administrative actions (bans/kicks/warns)
+- Resource start/stop events
+- Custom event support
 
-- **Comprehensive Event Logging**
-  - Player joins/leaves
-  - Chat messages
-  - Player deaths
-  - Commands usage
-  - Bans/Kicks/Warns
-  - Resource start/stop
-  - Custom events
+### 🐛 Debug System
+> [!IMPORTANT]
+> Debug logging requires the `pixel_logs_debug` convar to be set to `true`.
 
-- **Advanced Debug System**
-  - In-memory debug logging
-  - Separate debug webhook support
-  - Configurable log retention
-  - Detailed error tracking with stack traces
-  - Automatic error catching and reporting
+- In-memory debug logging with configurable retention
+- Separate debug webhook for critical errors
+- Detailed error tracking with stack traces
+- Automatic error catching and reporting
+- Resource information included in error logs
 
-- **Customizable Configuration**
-  - Per-event type toggling
-  - Customizable message templates
-  - Configurable identifier display
-  - Custom embed colors
-  - Player avatar support
+### ⚙️ Configuration
+> [!TIP]
+> All configuration is done through convars in your server.cfg file.
 
-- **Modern Discord Integration**
-  - Rich embeds with dynamic fields
-  - Customizable webhook settings
-  - Clean message formatting
-  - Player identifier integration
-  - Automatic timestamp handling
+- Per-event type toggling
+- Customizable message templates
+- Configurable identifier display
+- Custom embed colors
+- Player avatar support
 
-## Installation
+### 💬 Discord Integration
+- Rich embeds with dynamic fields
+- Customizable webhook settings
+- Clean message formatting
+- Player identifier integration
+- Automatic timestamp handling
+
+## 📦 Installation
 
 1. Download the latest release
 2. Place the `pixel_logs` folder in your server's resources directory
 3. Add `ensure pixel_logs` to your server.cfg
 4. Configure the resource using the convars below
 
-## Configuration
+## ⚙️ Configuration
 
 ### Required Convars
 
@@ -98,9 +103,12 @@ setr pixel_logs_discord_avatar "true" # Use Discord avatars
 setr pixel_logs_fivem_avatar "true" # Use FiveM avatars
 ```
 
-## Usage
+## 💻 Usage
 
 ### Basic Logging
+
+> [!NOTE]
+> Basic logging works out of the box with no additional setup required.
 
 The resource automatically logs various events based on your configuration. No additional setup is required for basic logging.
 
@@ -146,6 +154,9 @@ exports['pixel_logs']:SendCustomEmbed({
 
 ### Debug Logging
 
+> [!CAUTION]
+> Debug logging should only be enabled when needed as it can generate a large number of logs.
+
 When debug logging is enabled, you can add debug logs:
 
 ```lua
@@ -161,9 +172,10 @@ Debug logs will:
 - Include detailed error information and stack traces
 - Use a separate webhook if configured
 
-## Message Templates
+## 📝 Message Templates
 
-You can customize the message format for each event type in the config:
+> [!TIP]
+> You can customize the message format for each event type in the config.
 
 ```lua
 Config.Messages = {
@@ -181,31 +193,35 @@ Config.Messages = {
 }
 ```
 
-Available placeholders vary by event type:
-- `{player}` - Player name
-- `{admin}` - Admin name (for bans/kicks/warns)
-- `{reason}` - Reason for action
-- `{message}` - Chat message
-- `{command}` - Command used
-- `{resource}` - Resource name
-- `{action}` - Action performed
-- `{time}` - Timestamp
-- `{id}` - Player ID
-- `{location}` - Location coordinates
-- `{killer}` - Killer name
-- `{weapon}` - Weapon name
+### Available Placeholders
 
-## Support
+| Placeholder | Description | Example |
+|------------|-------------|---------|
+| `{player}` | Player name | Timmy Turner |
+| `{admin}` | Admin name | Admin |
+| `{reason}` | Reason for action | Breaking rules |
+| `{message}` | Chat message | Hello world! |
+| `{command}` | Command used | /kick |
+| `{resource}` | Resource name | pixel_logs |
+| `{action}` | Action performed | started |
+| `{time}` | Timestamp | 2024-04-13 12:00:00 |
+| `{id}` | Player ID | 1 |
+| `{location}` | Location coordinates | 123.45, 67.89, 10.0 |
+| `{killer}` | Killer name | Player2 |
+| `{weapon}` | Weapon name | WEAPON_PISTOL |
 
-For support, feature requests, or bug reports, please:
-1. Check the [GitHub Issues](https://github.com/ByteBrushStudios/pixel_logs/issues)
-2. Join our [Discord Server](https://discord.gg/Vv2bdC44Ge)
+## ❓ Support
 
-## License
+> [!IMPORTANT]
+> For support, feature requests, or bug reports, please:
+> 1. Check the [GitHub Issues](https://github.com/ByteBrushStudios/pixel_logs/issues)
+> 2. Join our [Discord Server](https://discord.gg/Vv2bdC44Ge)
+
+## 📄 License
 
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 
-## Credits
+## 👥 Credits
 
 - Developed by [Pixelated](https://codemeapixel.dev)
 - Maintained by [ByteBrush Studios](https://github.com/ByteBrushStudios) 
