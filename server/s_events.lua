@@ -18,7 +18,7 @@ AddEventHandler('playerConnecting', function(name, setKickReason, deferrals)
         }
         
         local message = Utils.FormatMessage('player_join', '**{player}** has joined the server', data)
-        Utils.SendToDiscord('player_join', message, source)
+        Utils.SendToDiscord('player_join', message, source, nil, data)
     end
 end)
 
@@ -36,7 +36,7 @@ AddEventHandler('playerDropped', function(reason)
         }
         
         local message = Utils.FormatMessage('player_leave', '**{player}** has left the server', data)
-        Utils.SendToDiscord('player_leave', message, source)
+        Utils.SendToDiscord('player_leave', message, source, nil, data)
     end
 end)
 
@@ -55,7 +55,7 @@ AddEventHandler('playerDied', function(killerType, killerId, weapon)
         }
         
         local message = Utils.FormatMessage('player_death', '**{player}** has died', data)
-        Utils.SendToDiscord('player_death', message, source)
+        Utils.SendToDiscord('player_death', message, source, nil, data)
     end
 end)
 
@@ -71,7 +71,7 @@ AddEventHandler('chatMessage', function(source, name, message)
             }
             
             local message = Utils.FormatMessage('player_commands', '**{player}** used a command', data)
-            Utils.SendToDiscord('player_commands', message, source)
+            Utils.SendToDiscord('player_commands', message, source, nil, data)
         end
     end
 end)
@@ -89,7 +89,7 @@ AddEventHandler('pixel_logs:ban', function(target, reason, duration, admin)
         }
         
         local message = Utils.FormatMessage('player_bans', '**{player}** has been banned', data)
-        Utils.SendToDiscord('player_bans', message, target)
+        Utils.SendToDiscord('player_bans', message, target, nil, data)
     end
 end)
 
@@ -105,7 +105,7 @@ AddEventHandler('pixel_logs:kick', function(target, reason, admin)
         }
         
         local message = Utils.FormatMessage('player_kicks', '**{player}** has been kicked', data)
-        Utils.SendToDiscord('player_kicks', message, target)
+        Utils.SendToDiscord('player_kicks', message, target, nil, data)
     end
 end)
 
@@ -121,7 +121,7 @@ AddEventHandler('pixel_logs:warn', function(target, reason, admin)
         }
         
         local message = Utils.FormatMessage('player_warns', '**{player}** has been warned', data)
-        Utils.SendToDiscord('player_warns', message, target)
+        Utils.SendToDiscord('player_warns', message, target, nil, data)
     end
 end)
 
@@ -135,7 +135,7 @@ AddEventHandler('onResourceStart', function(resourceName)
         }
         
         local message = Utils.FormatMessage('player_resources', 'Resource **{resource}** has been {action}', data)
-        Utils.SendToDiscord('player_resources', message)
+        Utils.SendToDiscord('player_resources', message, nil, nil, data)
     end
 end)
 
@@ -148,6 +148,6 @@ AddEventHandler('onResourceStop', function(resourceName)
         }
         
         local message = Utils.FormatMessage('player_resources', 'Resource **{resource}** has been {action}', data)
-        Utils.SendToDiscord('player_resources', message)
+        Utils.SendToDiscord('player_resources', message, nil, nil, data)
     end
 end) 

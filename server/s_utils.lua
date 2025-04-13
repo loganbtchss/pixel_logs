@@ -141,7 +141,7 @@ function Utils.FormatMessage(messageType, message, data)
     return formatted
 end
 
-function Utils.CreateEmbed(messageType, message, source, customColor)
+function Utils.CreateEmbed(messageType, message, source, customColor, data)
     local messageConfig = Config.Messages[messageType]
     if not messageConfig then
         exports['pixel_logs']:CatchError('Invalid message type: ' .. tostring(messageType), 'CreateEmbed')
@@ -220,10 +220,10 @@ function Utils.CreateEmbed(messageType, message, source, customColor)
     return embed
 end
 
-function Utils.SendToDiscord(messageType, message, source, customColor)
+function Utils.SendToDiscord(messageType, message, source, customColor, data)
     if not Config.LogTypes[messageType] then return end
     
-    local embed = Utils.CreateEmbed(messageType, message, source, customColor)
+    local embed = Utils.CreateEmbed(messageType, message, source, customColor, data)
     if not embed then return end
     
     PerformHttpRequest(Config.DiscordWebhook, function(err, text, headers) end, 'POST', json.encode({
