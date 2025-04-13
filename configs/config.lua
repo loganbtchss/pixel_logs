@@ -36,7 +36,20 @@ Config.LogTypes = {
     ['player_warns'] = GetConvar('pixel_logs_warns', 'true') == 'true',
     ['player_commands'] = GetConvar('pixel_logs_commands', 'true') == 'true',
     ['player_connections'] = GetConvar('pixel_logs_connections', 'true') == 'true',
-    ['player_resources'] = GetConvar('pixel_logs_resources', 'true') == 'true'
+    ['player_resources'] = GetConvar('pixel_logs_resources', 'true') == 'true',
+    -- txAdmin Event Log Types
+    ['txadmin_announcement'] = GetConvar('pixel_logs_txadmin_announcement', 'true') == 'true',
+    ['txadmin_shutdown'] = GetConvar('pixel_logs_txadmin_shutdown', 'true') == 'true',
+    ['txadmin_restart_skipped'] = GetConvar('pixel_logs_txadmin_restart_skipped', 'true') == 'true',
+    ['txadmin_direct_message'] = GetConvar('pixel_logs_txadmin_direct_message', 'true') == 'true',
+    ['txadmin_player_healed'] = GetConvar('pixel_logs_txadmin_player_healed', 'true') == 'true',
+    ['txadmin_whitelist_preapproval'] = GetConvar('pixel_logs_txadmin_whitelist_preapproval', 'true') == 'true',
+    ['txadmin_whitelist_request'] = GetConvar('pixel_logs_txadmin_whitelist_request', 'true') == 'true',
+    ['txadmin_action_revoked'] = GetConvar('pixel_logs_txadmin_action_revoked', 'true') == 'true',
+    ['txadmin_admin_auth'] = GetConvar('pixel_logs_txadmin_admin_auth', 'true') == 'true',
+    ['txadmin_admins_updated'] = GetConvar('pixel_logs_txadmin_admins_updated', 'true') == 'true',
+    ['txadmin_config_changed'] = GetConvar('pixel_logs_txadmin_config_changed', 'true') == 'true',
+    ['txadmin_console_command'] = GetConvar('pixel_logs_txadmin_console_command', 'true') == 'true',
 }
 
 -- Identifier Settings

@@ -325,6 +325,119 @@ Config.Messages = {
                 inline = false
             }
         }
+    },
+    -- txAdmin Event Messages
+    ['txadmin_announcement'] = {
+        title = "Server Announcement",
+        description = "A server announcement has been made",
+        fields = {
+            {name = "Announcer", value = "%s", inline = true},
+            {name = "Message", value = "%s", inline = false},
+            {name = "Timestamp", value = "%s", inline = true}
+        }
+    },
+    ['txadmin_shutdown'] = {
+        title = "Server Shutdown",
+        description = "The server is shutting down",
+        fields = {
+            {name = "Reason", value = "%s", inline = false},
+            {name = "Initiated By", value = "%s", inline = true},
+            {name = "Timestamp", value = "%s", inline = true}
+        }
+    },
+    ['txadmin_restart_skipped'] = {
+        title = "Scheduled Restart Skipped",
+        description = "A scheduled restart was skipped",
+        fields = {
+            {name = "Skipped By", value = "%s", inline = true},
+            {name = "Reason", value = "%s", inline = false},
+            {name = "Timestamp", value = "%s", inline = true}
+        }
+    },
+    ['txadmin_direct_message'] = {
+        title = "Admin Direct Message",
+        description = "An admin has sent a direct message to a player",
+        fields = {
+            {name = "Admin", value = "%s", inline = true},
+            {name = "Player", value = "%s", inline = true},
+            {name = "Message", value = "%s", inline = false},
+            {name = "Timestamp", value = "%s", inline = true}
+        }
+    },
+    ['txadmin_player_healed'] = {
+        title = "Player Healed",
+        description = "A player has been healed by an admin",
+        fields = {
+            {name = "Admin", value = "%s", inline = true},
+            {name = "Player", value = "%s", inline = true},
+            {name = "Timestamp", value = "%s", inline = true}
+        }
+    },
+    ['txadmin_whitelist_preapproval'] = {
+        title = "Whitelist Pre-Approval",
+        description = "A whitelist request has been pre-approved",
+        fields = {
+            {name = "Admin", value = "%s", inline = true},
+            {name = "License", value = "%s", inline = true},
+            {name = "Discord", value = "%s", inline = true},
+            {name = "Timestamp", value = "%s", inline = true}
+        }
+    },
+    ['txadmin_whitelist_request'] = {
+        title = "Whitelist Request",
+        description = "A new whitelist request has been submitted",
+        fields = {
+            {name = "License", value = "%s", inline = true},
+            {name = "Discord", value = "%s", inline = true},
+            {name = "Timestamp", value = "%s", inline = true}
+        }
+    },
+    ['txadmin_action_revoked'] = {
+        title = "Admin Action Revoked",
+        description = "An admin action has been revoked",
+        fields = {
+            {name = "Revoked By", value = "%s", inline = true},
+            {name = "Action Type", value = "%s", inline = true},
+            {name = "Target", value = "%s", inline = true},
+            {name = "Reason", value = "%s", inline = false},
+            {name = "Timestamp", value = "%s", inline = true}
+        }
+    },
+    ['txadmin_admin_auth'] = {
+        title = "Admin Authentication",
+        description = "An admin has authenticated",
+        fields = {
+            {name = "Admin", value = "%s", inline = true},
+            {name = "Action", value = "%s", inline = true},
+            {name = "Timestamp", value = "%s", inline = true}
+        }
+    },
+    ['txadmin_admins_updated'] = {
+        title = "Admin List Updated",
+        description = "The admin list has been updated",
+        fields = {
+            {name = "Updated By", value = "%s", inline = true},
+            {name = "Action", value = "%s", inline = true},
+            {name = "Timestamp", value = "%s", inline = true}
+        }
+    },
+    ['txadmin_config_changed'] = {
+        title = "txAdmin Config Changed",
+        description = "The txAdmin configuration has been changed",
+        fields = {
+            {name = "Changed By", value = "%s", inline = true},
+            {name = "Changes", value = "%s", inline = false},
+            {name = "Timestamp", value = "%s", inline = true}
+        }
+    },
+    ['txadmin_console_command'] = {
+        title = "Console Command",
+        description = "A console command has been executed",
+        fields = {
+            {name = "Admin", value = "%s", inline = true},
+            {name = "Command", value = "%s", inline = false},
+            {name = "Timestamp", value = "%s", inline = true}
+        }
     }
 }
 

@@ -13,14 +13,8 @@ This is an advanced Discord logging system for FiveM and RedM servers, providing
   - [💬 Discord Integration](#-discord-integration)
 - [📦 Installation](#-installation)
 - [⚙️ Configuration](#️-configuration-1)
-  - [Required Convars](#required-convars)
-  - [Optional Convars](#optional-convars)
-    - [Webhook Settings](#webhook-settings)
-    - [Proxy Settings](#proxy-settings)
-    - [Debug Settings](#debug-settings)
-    - [Log Type Toggles](#log-type-toggles)
-    - [Identifier Settings](#identifier-settings)
-    - [Avatar Settings](#avatar-settings)
+  - [Using pixel_convars.cfg](#using-pixel_convarscfg)
+  - [Configuration Categories](#configuration-categories)
 - [💻 Usage](#-usage)
   - [Basic Logging](#basic-logging)
   - [Custom Logs](#custom-logs)
@@ -51,6 +45,7 @@ This is an advanced Discord logging system for FiveM and RedM servers, providing
   - Player identifiers
 - Resource start/stop events
 - Custom event support
+- txAdmin event support
 
 ### 🐛 Debug System
 > [!IMPORTANT]
@@ -64,7 +59,7 @@ This is an advanced Discord logging system for FiveM and RedM servers, providing
 
 ### ⚙️ Configuration
 > [!TIP]
-> All configuration is done through convars in your server.cfg file.
+> All configuration is done through the `pixel_convars.cfg` file.
 
 - Per-event type toggling
 - Customizable message templates
@@ -73,15 +68,44 @@ This is an advanced Discord logging system for FiveM and RedM servers, providing
 - Player avatar support
 - Proxy support for Discord webhooks
 
-### Required Convars
+## 📦 Installation
+
+1. Download the latest release from the [GitHub repository](https://github.com/ByteBrushStudios/pixel_logs/releases)
+2. Extract the files to your server's resources directory
+3. Add `ensure pixel_logs` to your server.cfg
+4. Copy the `temp/pixel_convars.cfg` file to your server's config directory
+5. Edit the `pixel_convars.cfg` file to set your desired values
+6. Add `exec "pixel_convars.cfg"` to your server.cfg
+
+## ⚙️ Configuration
+
+### Using pixel_convars.cfg
+> [!TIP]
+> For easier configuration, use the included `pixel_convars.cfg` file located in the `temp` directory.
+
+1. Copy the `temp/pixel_convars.cfg` file to your server's config directory
+2. Edit the file to set your desired values (especially the required webhook URL)
+3. Add the following line to your server.cfg:
+
+```cfg
+exec "pixel_convars.cfg"
+```
+
+This approach keeps your server.cfg clean and organized, as all Pixel Logs settings are contained in a separate file.
+
+For more details, see the [temp/CONVARS_README.md](temp/CONVARS_README.md) file.
+
+### Configuration Categories
+
+The `pixel_convars.cfg` file contains the following categories of settings:
+
+#### Required Convars
 > [!IMPORTANT]
 > These convars are **mandatory** for the resource to start. If any of these are not set, the resource will not initialize.
 
 ```cfg
 set pixel_logs_webhook "YOUR_DISCORD_WEBHOOK_URL" # Required: Discord webhook URL for logging
 ```
-
-### Optional Convars
 
 #### Webhook Settings
 ```cfg
@@ -117,6 +141,22 @@ set pixel_logs_warns "true" # Warning logs
 set pixel_logs_commands "true" # Command usage logs
 set pixel_logs_connections "true" # Connection logs
 set pixel_logs_resources "true" # Resource start/stop logs
+```
+
+#### txAdmin Log Type Toggles
+```cfg
+set pixel_logs_txadmin_announcement "true" # txAdmin announcement logs
+set pixel_logs_txadmin_shutdown "true" # txAdmin shutdown logs
+set pixel_logs_txadmin_restart_skipped "true" # txAdmin restart skipped logs
+set pixel_logs_txadmin_direct_message "true" # txAdmin direct message logs
+set pixel_logs_txadmin_player_healed "true" # txAdmin player healed logs
+set pixel_logs_txadmin_whitelist_preapproval "true" # txAdmin whitelist preapproval logs
+set pixel_logs_txadmin_whitelist_request "true" # txAdmin whitelist request logs
+set pixel_logs_txadmin_action_revoked "true" # txAdmin action revoked logs
+set pixel_logs_txadmin_admin_auth "true" # txAdmin admin auth logs
+set pixel_logs_txadmin_admins_updated "true" # txAdmin admins updated logs
+set pixel_logs_txadmin_config_changed "true" # txAdmin config changed logs
+set pixel_logs_txadmin_console_command "true" # txAdmin console command logs
 ```
 
 #### Identifier Settings
@@ -213,12 +253,7 @@ Debug logs will:
 > [!TIP]
 > Proxy support is useful when your server is behind a firewall or when you need to route Discord webhook requests through a specific proxy server.
 
-To enable proxy support:
-1. Set `pixel_logs_proxy_enabled` to `true`
-2. Configure the proxy URL using `pixel_logs_proxy_url`
-3. If your proxy requires authentication, set `pixel_logs_proxy_username` and `pixel_logs_proxy_password`
-
-Example proxy configuration:
+To enable proxy support, edit the `pixel_convars.cfg` file and set:
 ```cfg
 set pixel_logs_proxy_enabled "true"
 set pixel_logs_proxy_url "http://proxy.example.com:8080"

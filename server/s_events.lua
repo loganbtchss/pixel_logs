@@ -636,4 +636,129 @@ AddEventHandler('txAdmin:events:whitelistPlayer', function(data)
     })
     
     Utils.SendEmbedToDiscord(embed)
+end)
+
+-- txAdmin Event Handlers
+RegisterNetEvent('txAdmin:events:announcement', function(data)
+    if not Config.LogTypes.txadmin_announcement then return end
+    local embed = Utils.CreateEmbed('txadmin_announcement', {
+        data.announcer or 'Unknown',
+        data.message or 'No message provided',
+        os.date('%Y-%m-%d %H:%M:%S')
+    })
+    Utils.SendEmbedToDiscord(embed)
+end)
+
+RegisterNetEvent('txAdmin:events:shutdown', function(data)
+    if not Config.LogTypes.txadmin_shutdown then return end
+    local embed = Utils.CreateEmbed('txadmin_shutdown', {
+        data.reason or 'No reason provided',
+        data.initiatedBy or 'Unknown',
+        os.date('%Y-%m-%d %H:%M:%S')
+    })
+    Utils.SendEmbedToDiscord(embed)
+end)
+
+RegisterNetEvent('txAdmin:events:restartSkipped', function(data)
+    if not Config.LogTypes.txadmin_restart_skipped then return end
+    local embed = Utils.CreateEmbed('txadmin_restart_skipped', {
+        data.skippedBy or 'Unknown',
+        data.reason or 'No reason provided',
+        os.date('%Y-%m-%d %H:%M:%S')
+    })
+    Utils.SendEmbedToDiscord(embed)
+end)
+
+RegisterNetEvent('txAdmin:events:directMessage', function(data)
+    if not Config.LogTypes.txadmin_direct_message then return end
+    local embed = Utils.CreateEmbed('txadmin_direct_message', {
+        data.admin or 'Unknown',
+        data.player or 'Unknown',
+        data.message or 'No message provided',
+        os.date('%Y-%m-%d %H:%M:%S')
+    })
+    Utils.SendEmbedToDiscord(embed)
+end)
+
+RegisterNetEvent('txAdmin:events:playerHealed', function(data)
+    if not Config.LogTypes.txadmin_player_healed then return end
+    local embed = Utils.CreateEmbed('txadmin_player_healed', {
+        data.admin or 'Unknown',
+        data.player or 'Unknown',
+        os.date('%Y-%m-%d %H:%M:%S')
+    })
+    Utils.SendEmbedToDiscord(embed)
+end)
+
+RegisterNetEvent('txAdmin:events:whitelistPreApproval', function(data)
+    if not Config.LogTypes.txadmin_whitelist_preapproval then return end
+    local embed = Utils.CreateEmbed('txadmin_whitelist_preapproval', {
+        data.admin or 'Unknown',
+        data.license or 'Unknown',
+        data.discord or 'Unknown',
+        os.date('%Y-%m-%d %H:%M:%S')
+    })
+    Utils.SendEmbedToDiscord(embed)
+end)
+
+RegisterNetEvent('txAdmin:events:whitelistRequest', function(data)
+    if not Config.LogTypes.txadmin_whitelist_request then return end
+    local embed = Utils.CreateEmbed('txadmin_whitelist_request', {
+        data.license or 'Unknown',
+        data.discord or 'Unknown',
+        os.date('%Y-%m-%d %H:%M:%S')
+    })
+    Utils.SendEmbedToDiscord(embed)
+end)
+
+RegisterNetEvent('txAdmin:events:actionRevoked', function(data)
+    if not Config.LogTypes.txadmin_action_revoked then return end
+    local embed = Utils.CreateEmbed('txadmin_action_revoked', {
+        data.revokedBy or 'Unknown',
+        data.actionType or 'Unknown',
+        data.target or 'Unknown',
+        data.reason or 'No reason provided',
+        os.date('%Y-%m-%d %H:%M:%S')
+    })
+    Utils.SendEmbedToDiscord(embed)
+end)
+
+RegisterNetEvent('txAdmin:events:adminAuth', function(data)
+    if not Config.LogTypes.txadmin_admin_auth then return end
+    local embed = Utils.CreateEmbed('txadmin_admin_auth', {
+        data.admin or 'Unknown',
+        data.action or 'Unknown',
+        os.date('%Y-%m-%d %H:%M:%S')
+    })
+    Utils.SendEmbedToDiscord(embed)
+end)
+
+RegisterNetEvent('txAdmin:events:adminsUpdated', function(data)
+    if not Config.LogTypes.txadmin_admins_updated then return end
+    local embed = Utils.CreateEmbed('txadmin_admins_updated', {
+        data.updatedBy or 'Unknown',
+        data.action or 'Unknown',
+        os.date('%Y-%m-%d %H:%M:%S')
+    })
+    Utils.SendEmbedToDiscord(embed)
+end)
+
+RegisterNetEvent('txAdmin:events:configChanged', function(data)
+    if not Config.LogTypes.txadmin_config_changed then return end
+    local embed = Utils.CreateEmbed('txadmin_config_changed', {
+        data.changedBy or 'Unknown',
+        data.changes or 'No changes details provided',
+        os.date('%Y-%m-%d %H:%M:%S')
+    })
+    Utils.SendEmbedToDiscord(embed)
+end)
+
+RegisterNetEvent('txAdmin:events:consoleCommand', function(data)
+    if not Config.LogTypes.txadmin_console_command then return end
+    local embed = Utils.CreateEmbed('txadmin_console_command', {
+        data.admin or 'Unknown',
+        data.command or 'Unknown',
+        os.date('%Y-%m-%d %H:%M:%S')
+    })
+    Utils.SendEmbedToDiscord(embed)
 end) 
