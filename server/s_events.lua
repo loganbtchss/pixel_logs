@@ -63,8 +63,26 @@ AddEventHandler('playerConnecting', function(name, setKickReason, deferrals)
             title = Config.Messages['player_join'].title,
             description = message,
             color = Config.Colors['player_join'],
-            fields = Config.Messages['player_join'].fields
+            timestamp = os.date('!%Y-%m-%dT%H:%M:%SZ'),
+            footer = {
+                text = 'Server Logs'
+            },
+            fields = {}
         }
+        
+        -- Add player info fields
+        table.insert(embed.fields, {
+            name = 'Player Information',
+            value = string.format('```\nName: %s\nID: %s\n```', data.player, data.id),
+            inline = false
+        })
+        
+        -- Add timestamp field
+        table.insert(embed.fields, {
+            name = 'Time',
+            value = data.time,
+            inline = true
+        })
         
         Utils.SendEmbedToDiscord(embed)
     end
@@ -88,98 +106,174 @@ AddEventHandler('playerDropped', function(reason)
             title = Config.Messages['player_leave'].title,
             description = message,
             color = Config.Colors['player_leave'],
-            fields = Config.Messages['player_leave'].fields
+            timestamp = os.date('!%Y-%m-%dT%H:%M:%SZ'),
+            footer = {
+                text = 'Server Logs'
+            },
+            fields = {}
         }
+        
+        -- Add player info fields
+        table.insert(embed.fields, {
+            name = 'Player Information',
+            value = string.format('```\nName: %s\nID: %s\n```', data.player, data.id),
+            inline = false
+        })
+        
+        -- Add reason and timestamp fields
+        table.insert(embed.fields, {
+            name = 'Reason',
+            value = data.reason,
+            inline = true
+        })
+        
+        table.insert(embed.fields, {
+            name = 'Time',
+            value = data.time,
+            inline = true
+        })
         
         Utils.SendEmbedToDiscord(embed)
     end
 end)
 
 -- Player Death Event
-AddEventHandler('pixel_logs:playerDied', function(data)
+AddEventHandler('pixel_logs:playerDeath', function(data)
+    if not Config.LogTypes['player_death'] then return end
+    
     local source = source
     local playerName = GetPlayerNameSafe(source)
     
-    if Config.LogTypes['player_death'] then
-        local deathData = {
-            player = playerName,
-            id = source,
-            time = os.date('%Y-%m-%d %H:%M:%S'),
-            weapon = data.weaponName,
-            killer = data.killer and GetPlayerNameSafe(data.killer) or 'Unknown',
-            location = data.location,
-            cause = data.cause,
-            coords = data.coords
-        }
-        
-        -- Format coordinates for display
-        local coordsStr = string.format('X: %.2f, Y: %.2f, Z: %.2f', 
-            deathData.coords.x, deathData.coords.y, deathData.coords.z)
-        
-        -- Add additional fields based on death cause
-        local additionalFields = {}
-        
-        if deathData.cause == 'Player Kill' then
-            table.insert(additionalFields, {
-                name = 'Killer',
-                value = deathData.killer,
-                inline = true
-            })
-        end
-        
-        table.insert(additionalFields, {
-            name = 'Death Cause',
-            value = deathData.cause,
+    local deathData = {
+        player = playerName,
+        id = source,
+        time = os.date('%Y-%m-%d %H:%M:%S'),
+        cause = data.cause or 'Unknown',
+        weapon = data.weapon or 'Unknown',
+        location = data.location or 'Unknown',
+        coords = data.coords or 'Unknown',
+        killer = data.killer or nil
+    }
+    
+    local message = Utils.FormatMessage('player_death', Config.Messages['player_death'].description, deathData)
+    local embed = {
+        title = Config.Messages['player_death'].title,
+        description = message,
+        color = Config.Colors['player_death'],
+        timestamp = os.date('!%Y-%m-%dT%H:%M:%SZ'),
+        footer = {
+            text = 'Server Logs'
+        },
+        fields = {}
+    }
+    
+    -- Add player info fields
+    table.insert(embed.fields, {
+        name = 'Player Information',
+        value = string.format('```\nName: %s\nID: %s\n```', deathData.player, deathData.id),
+        inline = false
+    })
+    
+    -- Add death info fields
+    table.insert(embed.fields, {
+        name = 'Death Cause',
+        value = deathData.cause,
+        inline = true
+    })
+    
+    table.insert(embed.fields, {
+        name = 'Weapon/Method',
+        value = deathData.weapon,
+        inline = true
+    })
+    
+    -- Add location fields
+    table.insert(embed.fields, {
+        name = 'Location',
+        value = deathData.location,
+        inline = true
+    })
+    
+    table.insert(embed.fields, {
+        name = 'Coordinates',
+        value = deathData.coords,
+        inline = true
+    })
+    
+    -- Add killer info if available
+    if deathData.killer then
+        table.insert(embed.fields, {
+            name = 'Killer',
+            value = deathData.killer,
             inline = true
         })
-        
-        table.insert(additionalFields, {
-            name = 'Location',
-            value = deathData.location,
-            inline = true
-        })
-        
-        table.insert(additionalFields, {
-            name = 'Coordinates',
-            value = coordsStr,
-            inline = false
-        })
-        
-        -- Create embed with additional fields
-        local embed = {
-            title = Config.Messages['player_death'].title,
-            description = Utils.FormatMessage('player_death', Config.Messages['player_death'].description, deathData),
-            color = Config.Colors['player_death'],
-            fields = additionalFields
-        }
-        
-        Utils.SendEmbedToDiscord(embed)
     end
+    
+    -- Add timestamp field
+    table.insert(embed.fields, {
+        name = 'Time',
+        value = deathData.time,
+        inline = true
+    })
+    
+    Utils.SendEmbedToDiscord(embed)
 end)
 
--- Command Event
-AddEventHandler('pixel_logs:playerCommand', function(command)
+-- Command Usage Event
+AddEventHandler('pixel_logs:commandUsage', function(data)
+    if not Config.LogTypes['player_commands'] then return end
+    
     local source = source
     local playerName = GetPlayerNameSafe(source)
     
-    if Config.LogTypes['player_commands'] then
-        local data = {
-            player = playerName,
-            id = source,
-            time = os.date('%Y-%m-%d %H:%M:%S'),
-            command = command
-        }
-        
-        local message = Utils.FormatMessage('player_commands', Config.Messages['player_commands'].description, data)
-        local embed = {
-            title = Config.Messages['player_commands'].title,
-            description = message,
-            color = Config.Colors['player_commands'],
-            fields = Config.Messages['player_commands'].fields
-        }
-        
-        Utils.SendEmbedToDiscord(embed)
-    end
+    local commandData = {
+        player = playerName,
+        id = source,
+        time = os.date('%Y-%m-%d %H:%M:%S'),
+        command = data.command or 'Unknown',
+        args = data.args or 'None'
+    }
+    
+    local message = Utils.FormatMessage('player_commands', Config.Messages['player_commands'].description, commandData)
+    local embed = {
+        title = Config.Messages['player_commands'].title,
+        description = message,
+        color = Config.Colors['player_commands'],
+        timestamp = os.date('!%Y-%m-%dT%H:%M:%SZ'),
+        footer = {
+            text = 'Server Logs'
+        },
+        fields = {}
+    }
+    
+    -- Add player info fields
+    table.insert(embed.fields, {
+        name = 'Player Information',
+        value = string.format('```\nName: %s\nID: %s\n```', commandData.player, commandData.id),
+        inline = false
+    })
+    
+    -- Add command info fields
+    table.insert(embed.fields, {
+        name = 'Command',
+        value = commandData.command,
+        inline = true
+    })
+    
+    table.insert(embed.fields, {
+        name = 'Arguments',
+        value = string.format('```\n%s\n```', commandData.args),
+        inline = false
+    })
+    
+    -- Add timestamp field
+    table.insert(embed.fields, {
+        name = 'Time',
+        value = commandData.time,
+        inline = true
+    })
+    
+    Utils.SendEmbedToDiscord(embed)
 end)
 
 -- Ban Event
@@ -261,28 +355,30 @@ AddEventHandler('onResourceStart', function(resourceName)
         }
         
         local message = Utils.FormatMessage('player_resources', Config.Messages['player_resources'].description, data)
-        
-        -- Format fields with actual values
-        local formattedFields = {}
-        for _, field in ipairs(Config.Messages['player_resources'].fields) do
-            local formattedValue = field.value
-            formattedValue = formattedValue:gsub('{resource}', data.resource)
-            formattedValue = formattedValue:gsub('{action}', data.action)
-            formattedValue = formattedValue:gsub('{time}', data.time)
-            
-            table.insert(formattedFields, {
-                name = field.name,
-                value = formattedValue,
-                inline = field.inline
-            })
-        end
-        
         local embed = {
             title = Config.Messages['player_resources'].title,
             description = message,
             color = Config.Colors['player_resources'],
-            fields = formattedFields
+            timestamp = os.date('!%Y-%m-%dT%H:%M:%SZ'),
+            footer = {
+                text = 'Server Logs'
+            },
+            fields = {}
         }
+        
+        -- Add resource info fields
+        table.insert(embed.fields, {
+            name = 'Resource Information',
+            value = string.format('```\nName: %s\nAction: %s\n```', data.resource, data.action),
+            inline = false
+        })
+        
+        -- Add timestamp field
+        table.insert(embed.fields, {
+            name = 'Time',
+            value = data.time,
+            inline = true
+        })
         
         Utils.SendEmbedToDiscord(embed)
     end
@@ -300,29 +396,106 @@ AddEventHandler('onResourceStop', function(resourceName)
         }
         
         local message = Utils.FormatMessage('player_resources', Config.Messages['player_resources'].description, data)
-        
-        -- Format fields with actual values
-        local formattedFields = {}
-        for _, field in ipairs(Config.Messages['player_resources'].fields) do
-            local formattedValue = field.value
-            formattedValue = formattedValue:gsub('{resource}', data.resource)
-            formattedValue = formattedValue:gsub('{action}', data.action)
-            formattedValue = formattedValue:gsub('{time}', data.time)
-            
-            table.insert(formattedFields, {
-                name = field.name,
-                value = formattedValue,
-                inline = field.inline
-            })
-        end
-        
         local embed = {
             title = Config.Messages['player_resources'].title,
             description = message,
             color = Config.Colors['player_resources'],
-            fields = formattedFields
+            timestamp = os.date('!%Y-%m-%dT%H:%M:%SZ'),
+            footer = {
+                text = 'Server Logs'
+            },
+            fields = {}
         }
+        
+        -- Add resource info fields
+        table.insert(embed.fields, {
+            name = 'Resource Information',
+            value = string.format('```\nName: %s\nAction: %s\n```', data.resource, data.action),
+            inline = false
+        })
+        
+        -- Add timestamp field
+        table.insert(embed.fields, {
+            name = 'Time',
+            value = data.time,
+            inline = true
+        })
         
         Utils.SendEmbedToDiscord(embed)
     end
+end)
+
+-- Administrative Actions Event
+AddEventHandler('pixel_logs:adminAction', function(data)
+    if not Config.LogTypes[data.type] then return end
+    
+    local source = source
+    local adminName = GetPlayerNameSafe(source)
+    
+    local actionData = {
+        admin = adminName,
+        adminId = source,
+        player = data.player or 'Unknown',
+        playerId = data.playerId or 'Unknown',
+        time = os.date('%Y-%m-%d %H:%M:%S'),
+        reason = data.reason or 'No reason provided',
+        duration = data.duration or 'Permanent',
+        type = data.type or 'Unknown'
+    }
+    
+    local message = Utils.FormatMessage(data.type, Config.Messages[data.type].description, actionData)
+    local embed = {
+        title = Config.Messages[data.type].title,
+        description = message,
+        color = Config.Colors[data.type],
+        timestamp = os.date('!%Y-%m-%dT%H:%M:%SZ'),
+        footer = {
+            text = 'Server Logs'
+        },
+        fields = {}
+    }
+    
+    -- Add admin info fields
+    table.insert(embed.fields, {
+        name = 'Admin Information',
+        value = string.format('```\nName: %s\nID: %s\n```', actionData.admin, actionData.adminId),
+        inline = false
+    })
+    
+    -- Add player info fields
+    table.insert(embed.fields, {
+        name = 'Player Information',
+        value = string.format('```\nName: %s\nID: %s\n```', actionData.player, actionData.playerId),
+        inline = false
+    })
+    
+    -- Add action info fields
+    table.insert(embed.fields, {
+        name = 'Action Type',
+        value = actionData.type:upper(),
+        inline = true
+    })
+    
+    if actionData.duration ~= 'Permanent' then
+        table.insert(embed.fields, {
+            name = 'Duration',
+            value = actionData.duration,
+            inline = true
+        })
+    end
+    
+    table.insert(embed.fields, {
+        name = 'Reason',
+        value = actionData.reason,
+        inline = false
+    })
+    
+    -- Add timestamp field
+    table.insert(embed.fields, {
+        name = 'Time',
+        value = actionData.time,
+        inline = true
+    })
+    
+    Utils.SendEmbedToDiscord(embed)
 end) 

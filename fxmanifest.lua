@@ -33,7 +33,11 @@ server_exports {
     'GetUtils',
     'SendCustomLog',
     'SendCustomEmbed',
-    'AddDebugLog'
+    'AddDebugLog',
+    'GetDebugLog',
+    'GetAllDebugLogs',
+    'ClearDebugLogs',
+    'CatchError'
 }
 
 client_exports {

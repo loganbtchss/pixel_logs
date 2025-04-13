@@ -1,153 +1,123 @@
 --[[
-    Pixel Logs - Debug System
+    Pixel Logs - Debug Handler
     Version: 1.04122025
 ]]
 
-local debugLogs = {}
-local maxLogs = Config.Debug.MaxLogs
+local Utils = exports['pixel_logs']:GetUtils()
 
 -- Helper function to safely encode data for debug logs
 local function SafeEncode(data)
-    if type(data) == 'table' then
-        local success, result = pcall(function() return json.encode(data) end)
-        return success and result or 'Failed to encode table'
-    elseif type(data) == 'string' then
-        return data
-    else
-        return tostring(data)
-    end
+    local success, result = pcall(json.encode, data)
+    return success and result or 'Failed to encode data'
 end
 
--- Helper function to safely get stack trace
-local function GetStackTrace()
-    local success, stack = pcall(function()
-        return debug.traceback()
-    end)
-    
-    if not success or type(stack) ~= 'string' then
-        return 'Failed to get stack trace'
-    end
-    
-    -- Remove the first line (it's just the error message)
-    local lines = {}
-    for line in stack:gmatch("[^\r\n]+") do
-        if not line:match("^stack traceback:") then
-            table.insert(lines, line)
-        end
-    end
-    return table.concat(lines, "\n")
+-- Helper function to safely decode data for debug logs
+local function SafeDecode(data)
+    local success, result = pcall(json.decode, data)
+    return success and result or nil
 end
 
--- Add a debug log
-function AddDebugLog(type, data)
+-- Debug Logging Functions
+local debugLogs = {}
+local maxLogs = Config.Debug.MaxLogs
+
+function Utils.AddDebugLog(type, message, data)
     if not Config.Debug.Enabled then return end
     
-    local timestamp = os.date('%Y-%m-%d %H:%M:%S')
-    local logIndex = #debugLogs + 1
-    
-    -- If we've reached the maximum number of logs, remove the oldest one
-    if logIndex > maxLogs then
-        table.remove(debugLogs, 1)
-        logIndex = maxLogs
-    end
-    
-    -- Create the log entry
-    local logEntry = {
-        index = logIndex,
-        timestamp = timestamp,
+    local log = {
         type = type,
-        data = data
+        message = message,
+        data = data,
+        timestamp = os.date('%Y-%m-%d %H:%M:%S'),
+        resource = GetCurrentResourceName()
     }
     
-    -- Add to logs
-    table.insert(debugLogs, logEntry)
+    table.insert(debugLogs, 1, log)
     
-    -- Send to Discord if webhook is configured
-    if Config.Debug.Webhook ~= '' then
-        local embed = {
-            title = data.title or 'Debug Log',
-            description = data.description or 'A debug log has been created',
-            color = type == 'error' and 16711680 or 16776960, -- Red for errors, Yellow for others
-            fields = data.fields or {
-                {
-                    name = 'Log Information',
-                    value = string.format('```\nType: %s\nIndex: %s\nTime: %s```', type, logIndex, timestamp),
-                    inline = false
-                }
-            },
-            footer = {
-                text = 'Pixel Logs Debug System'
-            },
-            timestamp = timestamp
-        }
-        
-        PerformHttpRequest(Config.Debug.Webhook, function(err, text, headers)
-            if err ~= 204 then
-                print('^1[Pixel Logs] Failed to send debug log to Discord. Error: ' .. tostring(err) .. '^0')
-            end
-        end, 'POST', json.encode({
-            username = 'Debug Logs',
-            embeds = {embed}
-        }), {['Content-Type'] = 'application/json'})
+    -- Trim logs if exceeding max
+    while #debugLogs > maxLogs do
+        table.remove(debugLogs)
     end
     
-    return logIndex
-end
-
--- Catch and log errors
-function CatchError(err, context)
-    if not Config.Debug.Enabled then return end
-    
-    local stackTrace = GetStackTrace()
-    local errorData = {
-        title = 'Script Error',
-        description = 'An error occurred in the script. Please reference this log when requesting support.',
+    -- Create embed for Discord
+    local embed = {
+        title = string.format('%s Debug Log', type:upper()),
+        description = message,
+        color = type == 'error' and 16711680 or 16776960, -- Red for error, Yellow for others
+        timestamp = os.date('!%Y-%m-%dT%H:%M:%SZ'),
+        footer = {
+            text = 'Server Logs'
+        },
         fields = {
             {
-                name = 'Error Details',
-                value = string.format('```\nError: %s\nContext: %s\nStack Trace:\n%s```', 
-                    tostring(err),
-                    context or 'No context provided',
-                    stackTrace
-                ),
-                inline = false
+                name = 'Resource',
+                value = log.resource,
+                inline = true
             },
             {
-                name = 'Resource Info',
-                value = string.format('```\nResource: %s\nVersion: %s\nServer: %s```',
-                    GetCurrentResourceName(),
-                    GetResourceMetadata(GetCurrentResourceName(), 'version', 0),
-                    GetConvar('sv_hostname', 'Unknown')
-                ),
-                inline = false
+                name = 'Time',
+                value = log.timestamp,
+                inline = true
             }
         }
     }
     
-    return AddDebugLog('error', errorData)
+    -- Add data field if provided
+    if data then
+        table.insert(embed.fields, {
+            name = 'Data',
+            value = string.format('```json\n%s\n```', SafeEncode(data)),
+            inline = false
+        })
+    end
+    
+    Utils.SendEmbedToDiscord(embed)
 end
 
--- Get debug log information
-function GetDebugLog(index)
-    if not Config.Debug.Enabled then return nil end
+function Utils.GetDebugLog(index)
     return debugLogs[index]
 end
 
--- Get all debug logs
-function GetAllDebugLogs()
-    if not Config.Debug.Enabled then return {} end
+function Utils.GetAllDebugLogs()
     return debugLogs
 end
 
--- Clear all debug logs
-function ClearDebugLogs()
-    if not Config.Debug.Enabled then return end
+function Utils.ClearDebugLogs()
     debugLogs = {}
 end
 
--- Register the exports
-exports('AddDebugLog', AddDebugLog)
-exports('GetDebugLog', GetDebugLog)
-exports('GetAllDebugLogs', GetAllDebugLogs)
-exports('ClearDebugLogs', ClearDebugLogs)
+-- Error Catching
+function CatchError(error, source)
+    if not Config.Debug.Enabled then return end
+    
+    local embed = {
+        title = 'Error Log',
+        description = string.format('**Source:** %s\n**Error:** %s', source, error),
+        color = 16711680, -- Red
+        timestamp = os.date('!%Y-%m-%dT%H:%M:%SZ'),
+        footer = {
+            text = 'Server Logs'
+        },
+        fields = {
+            {
+                name = 'Resource',
+                value = GetCurrentResourceName(),
+                inline = true
+            },
+            {
+                name = 'Time',
+                value = os.date('%Y-%m-%d %H:%M:%S'),
+                inline = true
+            }
+        }
+    }
+    
+    Utils.SendEmbedToDiscord(embed)
+end
+
+-- Export debug functions
+exports('AddDebugLog', Utils.AddDebugLog)
+exports('GetDebugLog', Utils.GetDebugLog)
+exports('GetAllDebugLogs', Utils.GetAllDebugLogs)
+exports('ClearDebugLogs', Utils.ClearDebugLogs)
 exports('CatchError', CatchError) 

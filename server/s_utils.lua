@@ -220,44 +220,6 @@ function Utils.CreateEmbed(messageType, message, source, customColor, data)
     return embed
 end
 
--- Consolidated webhook request handler
-function Utils.SendToDiscord(messageType, message, source, customColor, data)
-    if not Config.LogTypes[messageType] then return end
-    
-    local embed = Utils.CreateEmbed(messageType, message, source, customColor, data)
-    if not embed then return end
-    
-    Utils.SendWebhookRequest({embeds = {embed}})
-end
-
-function Utils.SendEmbedToDiscord(embed)
-    Utils.SendWebhookRequest({embeds = {embed}})
-end
-
--- Private webhook request function
-function Utils.SendWebhookRequest(payload)
-    payload.username = Config.DiscordUsername
-    payload.avatar_url = Config.DiscordAvatar
-    
-    local headers = {
-        ['Content-Type'] = 'application/json'
-    }
-    
-    if Config.Proxy.Enabled and Config.Proxy.URL ~= '' then
-        headers['Proxy'] = Config.Proxy.URL
-        if Config.Proxy.Username ~= '' and Config.Proxy.Password ~= '' then
-            local auth = string.format('%s:%s', Config.Proxy.Username, Config.Proxy.Password)
-            headers['Proxy-Authorization'] = 'Basic ' .. string.gsub(base64.encode(auth), '\n', '')
-        end
-    end
-    
-    PerformHttpRequest(Config.DiscordWebhook, function(err, text, headers)
-        if err ~= 204 then
-            exports['pixel_logs']:CatchError('Failed to send message to Discord. Error: ' .. tostring(err), 'SendWebhookRequest')
-        end
-    end, 'POST', json.encode(payload), headers)
-end
-
 -- Debug Logging Functions
 function Utils.AddDebugLog(type, message, data)
     if not Config.Debug.Enabled then return end
@@ -346,7 +308,6 @@ end)
 exports('GetPlayerIdentifiers', Utils.GetPlayerIdentifiers)
 exports('FormatMessage', Utils.FormatMessage)
 exports('CreateEmbed', Utils.CreateEmbed)
-exports('SendToDiscord', Utils.SendToDiscord)
 exports('AddDebugLog', Utils.AddDebugLog)
 exports('GetDebugLog', Utils.GetDebugLog)
 exports('GetAllDebugLogs', Utils.GetAllDebugLogs)
