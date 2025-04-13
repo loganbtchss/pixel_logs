@@ -21,6 +21,7 @@ client_scripts {
 }
 
 server_scripts {
+    'server/s_init.lua',
     'server/s_utils.lua',
     'server/s_chat.lua',
     'server/s_events.lua',

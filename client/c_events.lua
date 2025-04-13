@@ -42,4 +42,14 @@ end)
 RegisterNetEvent('pixel_logs:logWarn')
 AddEventHandler('pixel_logs:logWarn', function(target, reason)
     TriggerServerEvent('pixel_logs:playerWarn', target, reason)
+end)
+
+-- Notification Handler
+RegisterNetEvent('pixel_logs:notify')
+AddEventHandler('pixel_logs:notify', function(message)
+    TriggerEvent('chat:addMessage', {
+        color = {255, 0, 0},
+        multiline = true,
+        args = {'Pixel Logs', message}
+    })
 end) 

@@ -1,3 +1,8 @@
+--[[
+    Pixel Logs - Utility Functions
+    Version: 1.04122025
+]]
+
 local Utils = {}
 
 -- Debug Logging
@@ -6,6 +11,56 @@ local maxDebugLogs = Config.Debug.MaxLogs
 
 -- Avatar Cache
 local avatarCache = {}
+
+-- Helper function to safely get resource metadata
+local function GetResourceMetadataSafe(resource, key, index)
+    local success, result = pcall(function()
+        return GetResourceMetadata(resource, key, index)
+    end)
+    return success and result or 'Unknown'
+end
+
+-- Helper function to safely get convar
+local function GetConvarSafe(name, default)
+    local success, result = pcall(function()
+        return GetConvar(name, default)
+    end)
+    return success and result or default
+end
+
+-- Helper function to safely encode JSON
+local function SafeJsonEncode(data)
+    local success, result = pcall(function()
+        return json.encode(data)
+    end)
+    return success and result or 'Failed to encode JSON'
+end
+
+-- Helper function to safely decode JSON
+local function SafeJsonDecode(data)
+    local success, result = pcall(function()
+        return json.decode(data)
+    end)
+    return success and result or nil
+end
+
+-- Helper function to safely iterate over tables
+local function SafeTableIterate(t, func)
+    if type(t) ~= 'table' then
+        exports['pixel_logs']:CatchError('Invalid table provided for iteration', 'SafeTableIterate')
+        return
+    end
+    
+    local success, err = pcall(function()
+        for k, v in pairs(t) do
+            func(k, v)
+        end
+    end)
+    
+    if not success then
+        exports['pixel_logs']:CatchError(err, 'SafeTableIterate')
+    end
+end
 
 function Utils.GetPlayerAvatar(source, identifierType, identifier)
     if not Config.Avatars.Enabled then return Config.Avatars.Default end
@@ -69,21 +124,27 @@ function Utils.GetPlayerIdentifiers(source)
     return identifiers
 end
 
-function Utils.FormatMessage(type, data)
+function Utils.FormatMessage(type, message, data)
     local messageConfig = Config.Messages[type]
-    if not messageConfig then return nil end
-    
-    local message = messageConfig.description
-    for k, v in pairs(data) do
-        message = message:gsub('{' .. k .. '}', tostring(v))
+    if not messageConfig then
+        exports['pixel_logs']:CatchError('Invalid message type: ' .. tostring(type), 'FormatMessage')
+        return message
     end
     
-    return message
+    local formatted = message
+    SafeTableIterate(data, function(key, value)
+        formatted = formatted:gsub('{' .. key .. '}', tostring(value))
+    end)
+    
+    return formatted
 end
 
 function Utils.CreateEmbed(type, message, source, customColor)
     local messageConfig = Config.Messages[type]
-    if not messageConfig then return nil end
+    if not messageConfig then
+        exports['pixel_logs']:CatchError('Invalid message type: ' .. tostring(type), 'CreateEmbed')
+        return nil
+    end
     
     local embed = {
         color = customColor or Config.Colors[type] or 16777215,
