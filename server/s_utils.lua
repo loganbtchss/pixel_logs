@@ -124,10 +124,10 @@ function Utils.GetPlayerIdentifiers(source)
     return identifiers
 end
 
-function Utils.FormatMessage(type, message, data)
-    local messageConfig = Config.Messages[type]
+function Utils.FormatMessage(messageType, message, data)
+    local messageConfig = Config.Messages[messageType]
     if not messageConfig then
-        exports['pixel_logs']:CatchError('Invalid message type: ' .. tostring(type), 'FormatMessage')
+        exports['pixel_logs']:CatchError('Invalid message type: ' .. tostring(messageType), 'FormatMessage')
         return message
     end
     
@@ -141,15 +141,15 @@ function Utils.FormatMessage(type, message, data)
     return formatted
 end
 
-function Utils.CreateEmbed(type, message, source, customColor)
-    local messageConfig = Config.Messages[type]
+function Utils.CreateEmbed(messageType, message, source, customColor)
+    local messageConfig = Config.Messages[messageType]
     if not messageConfig then
-        exports['pixel_logs']:CatchError('Invalid message type: ' .. tostring(type), 'CreateEmbed')
+        exports['pixel_logs']:CatchError('Invalid message type: ' .. tostring(messageType), 'CreateEmbed')
         return nil
     end
     
     local embed = {
-        color = customColor or Config.Colors[type] or 16777215,
+        color = customColor or Config.Colors[messageType] or 16777215,
         title = messageConfig.title,
         description = message,
         timestamp = os.date('!%Y-%m-%dT%H:%M:%SZ'),
@@ -220,10 +220,10 @@ function Utils.CreateEmbed(type, message, source, customColor)
     return embed
 end
 
-function Utils.SendToDiscord(type, message, source, customColor)
-    if not Config.LogTypes[type] then return end
+function Utils.SendToDiscord(messageType, message, source, customColor)
+    if not Config.LogTypes[messageType] then return end
     
-    local embed = Utils.CreateEmbed(type, message, source, customColor)
+    local embed = Utils.CreateEmbed(messageType, message, source, customColor)
     if not embed then return end
     
     PerformHttpRequest(Config.DiscordWebhook, function(err, text, headers) end, 'POST', json.encode({
