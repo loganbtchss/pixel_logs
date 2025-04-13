@@ -1,4 +1,5 @@
-Messages = {
+-- Set Messages and Colors in Config
+Config.Messages = {
     ['player_join'] = {
         title = 'Player Joined',
         description = '**{player}** has joined the server',
@@ -201,8 +202,8 @@ Messages = {
     }
 }
 
--- Embed Colors
-Colors = {
+-- Set Colors in Config
+Config.Colors = {
     ['player_join'] = 65280, -- Green
     ['player_leave'] = 16711680, -- Red
     ['player_death'] = 16711680, -- Red

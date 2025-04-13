@@ -1,5 +1,9 @@
 Config = {}
 
+-- Initialize Messages and Colors tables
+Config.Messages = {}
+Config.Colors = {}
+
 -- Discord Webhook Configuration
 Config.DiscordWebhook = GetConvar('pixel_logs_webhook', '') -- Discord webhook URL
 Config.DiscordUsername = GetConvar('pixel_logs_username', 'Server Logs') -- Username for the webhook
@@ -47,7 +51,3 @@ Config.Avatars = {
         ['fivem'] = GetConvar('pixel_logs_fivem_avatar', 'true') == 'true'
     }
 }
-
--- Include messages configuration
-Config.Messages = Messages
-Config.Colors = Colors
