@@ -99,6 +99,7 @@ set pixel_logs_proxy_password "" # Proxy password (if required)
 set pixel_logs_debug "false" # Enable debug logging
 set pixel_logs_debug_maxlogs "100" # Maximum number of debug logs to keep
 set pixel_logs_debug_webhook "" # Optional separate webhook for debug logs
+set pixel_logs_debug_noversion "false" # Skip version checks while keeping debug logging active
 ```
 
 #### Log Type Toggles
