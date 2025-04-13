@@ -1,6 +1,35 @@
 # Pixel Logs
 This is an advanced Discord logging system for FiveM and RedM servers, providing comprehensive logging capabilities with a clean and modern interface.
 
+## 📑 Table of Contents
+
+- [🚀 Features](#-features)
+  - [📝 Event Logging](#-event-logging)
+  - [🐛 Debug System](#-debug-system)
+  - [⚙️ Configuration](#️-configuration)
+  - [💬 Discord Integration](#-discord-integration)
+- [📦 Installation](#-installation)
+- [⚙️ Configuration](#️-configuration-1)
+  - [Required Convars](#required-convars)
+  - [Optional Convars](#optional-convars)
+    - [Webhook Settings](#webhook-settings)
+    - [Proxy Settings](#proxy-settings)
+    - [Debug Settings](#debug-settings)
+    - [Log Type Toggles](#log-type-toggles)
+    - [Identifier Settings](#identifier-settings)
+    - [Avatar Settings](#avatar-settings)
+- [💻 Usage](#-usage)
+  - [Basic Logging](#basic-logging)
+  - [Custom Logs](#custom-logs)
+  - [Custom Embeds](#custom-embeds)
+  - [Debug Logging](#debug-logging)
+  - [Proxy Support](#proxy-support)
+- [📝 Message Templates](#-message-templates)
+  - [Available Placeholders](#available-placeholders)
+- [❓ Support](#-support)
+- [📄 License](#-license)
+- [👥 Credits](#-credits)
+
 ## 🚀 Features
 
 ### 📝 Event Logging
@@ -31,6 +60,7 @@ This is an advanced Discord logging system for FiveM and RedM servers, providing
 - Configurable identifier display
 - Custom embed colors
 - Player avatar support
+- Proxy support for Discord webhooks
 
 ### 💬 Discord Integration
 - Rich embeds with dynamic fields
@@ -38,6 +68,7 @@ This is an advanced Discord logging system for FiveM and RedM servers, providing
 - Clean message formatting
 - Player identifier integration
 - Automatic timestamp handling
+- Proxy support for webhook requests
 
 ## 📦 Installation
 
@@ -51,56 +82,64 @@ This is an advanced Discord logging system for FiveM and RedM servers, providing
 ### Required Convars
 
 ```cfg
-setr pixel_logs_webhook "YOUR_DISCORD_WEBHOOK_URL"
+set pixel_logs_webhook "YOUR_DISCORD_WEBHOOK_URL"
 ```
 
 ### Optional Convars
 
 #### Webhook Settings
 ```cfg
-setr pixel_logs_username "Server Logs" # Webhook username
-setr pixel_logs_avatar "" # Webhook avatar URL
+set pixel_logs_username "Server Logs" # Webhook username
+set pixel_logs_avatar "" # Webhook avatar URL
+```
+
+#### Proxy Settings
+```cfg
+set pixel_logs_proxy_enabled "false" # Enable proxy support
+set pixel_logs_proxy_url "" # Proxy URL (e.g., http://proxy.example.com:8080)
+set pixel_logs_proxy_username "" # Proxy username (if required)
+set pixel_logs_proxy_password "" # Proxy password (if required)
 ```
 
 #### Debug Settings
 ```cfg
-setr pixel_logs_debug "false" # Enable debug logging
-setr pixel_logs_debug_maxlogs "100" # Maximum number of debug logs to keep
-setr pixel_logs_debug_webhook "" # Optional separate webhook for debug logs
+set pixel_logs_debug "false" # Enable debug logging
+set pixel_logs_debug_maxlogs "100" # Maximum number of debug logs to keep
+set pixel_logs_debug_webhook "" # Optional separate webhook for debug logs
 ```
 
 #### Log Type Toggles
 ```cfg
-setr pixel_logs_join "true" # Player join logs
-setr pixel_logs_leave "true" # Player leave logs
-setr pixel_logs_death "true" # Player death logs
-setr pixel_logs_chat "true" # Chat message logs
-setr pixel_logs_bans "true" # Ban logs
-setr pixel_logs_kicks "true" # Kick logs
-setr pixel_logs_warns "true" # Warning logs
-setr pixel_logs_commands "true" # Command usage logs
-setr pixel_logs_connections "true" # Connection logs
-setr pixel_logs_resources "true" # Resource start/stop logs
+set pixel_logs_join "true" # Player join logs
+set pixel_logs_leave "true" # Player leave logs
+set pixel_logs_death "true" # Player death logs
+set pixel_logs_chat "true" # Chat message logs
+set pixel_logs_bans "true" # Ban logs
+set pixel_logs_kicks "true" # Kick logs
+set pixel_logs_warns "true" # Warning logs
+set pixel_logs_commands "true" # Command usage logs
+set pixel_logs_connections "true" # Connection logs
+set pixel_logs_resources "true" # Resource start/stop logs
 ```
 
 #### Identifier Settings
 ```cfg
-setr pixel_logs_steam "true" # Show Steam ID
-setr pixel_logs_discord "true" # Show Discord ID
-setr pixel_logs_license "true" # Show License
-setr pixel_logs_xbox "true" # Show Xbox ID
-setr pixel_logs_live "true" # Show Live ID
-setr pixel_logs_fivem "true" # Show FiveM ID
-setr pixel_logs_ip "false" # Show IP address
+set pixel_logs_steam "true" # Show Steam ID
+set pixel_logs_discord "true" # Show Discord ID
+set pixel_logs_license "true" # Show License
+set pixel_logs_xbox "true" # Show Xbox ID
+set pixel_logs_live "true" # Show Live ID
+set pixel_logs_fivem "true" # Show FiveM ID
+set pixel_logs_ip "false" # Show IP address
 ```
 
 #### Avatar Settings
 ```cfg
-setr pixel_logs_avatars "true" # Enable player avatars
-setr pixel_logs_default_avatar "https://i.imgur.com/example.png" # Default avatar URL
-setr pixel_logs_steam_avatar "true" # Use Steam avatars
-setr pixel_logs_discord_avatar "true" # Use Discord avatars
-setr pixel_logs_fivem_avatar "true" # Use FiveM avatars
+set pixel_logs_avatars "true" # Enable player avatars
+set pixel_logs_default_avatar "https://i.imgur.com/example.png" # Default avatar URL
+set pixel_logs_steam_avatar "true" # Use Steam avatars
+set pixel_logs_discord_avatar "true" # Use Discord avatars
+set pixel_logs_fivem_avatar "true" # Use FiveM avatars
 ```
 
 ## 💻 Usage
@@ -171,6 +210,24 @@ Debug logs will:
 - Create a Discord embed with the log information
 - Include detailed error information and stack traces
 - Use a separate webhook if configured
+
+### Proxy Support
+
+> [!TIP]
+> Proxy support is useful when your server is behind a firewall or when you need to route Discord webhook requests through a specific proxy server.
+
+To enable proxy support:
+1. Set `pixel_logs_proxy_enabled` to `true`
+2. Configure the proxy URL using `pixel_logs_proxy_url`
+3. If your proxy requires authentication, set `pixel_logs_proxy_username` and `pixel_logs_proxy_password`
+
+Example proxy configuration:
+```cfg
+set pixel_logs_proxy_enabled "true"
+set pixel_logs_proxy_url "http://proxy.example.com:8080"
+set pixel_logs_proxy_username "proxyuser"
+set pixel_logs_proxy_password "proxypass"
+```
 
 ## 📝 Message Templates
 

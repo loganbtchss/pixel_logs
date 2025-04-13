@@ -226,11 +226,28 @@ function Utils.SendToDiscord(messageType, message, source, customColor, data)
     local embed = Utils.CreateEmbed(messageType, message, source, customColor, data)
     if not embed then return end
     
-    PerformHttpRequest(Config.DiscordWebhook, function(err, text, headers) end, 'POST', json.encode({
+    local headers = {
+        ['Content-Type'] = 'application/json'
+    }
+    
+    -- Add proxy configuration if enabled
+    if Config.Proxy.Enabled and Config.Proxy.URL ~= '' then
+        headers['Proxy'] = Config.Proxy.URL
+        if Config.Proxy.Username ~= '' and Config.Proxy.Password ~= '' then
+            local auth = string.format('%s:%s', Config.Proxy.Username, Config.Proxy.Password)
+            headers['Proxy-Authorization'] = 'Basic ' .. string.gsub(base64.encode(auth), '\n', '')
+        end
+    end
+    
+    PerformHttpRequest(Config.DiscordWebhook, function(err, text, headers)
+        if err ~= 204 then
+            exports['pixel_logs']:CatchError('Failed to send message to Discord. Error: ' .. tostring(err), 'SendToDiscord')
+        end
+    end, 'POST', json.encode({
         username = Config.DiscordUsername,
         avatar_url = Config.DiscordAvatar,
         embeds = {embed}
-    }), { ['Content-Type'] = 'application/json' })
+    }), headers)
 end
 
 -- Debug Logging Functions

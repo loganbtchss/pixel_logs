@@ -9,6 +9,14 @@ Config.DiscordWebhook = GetConvar('pixel_logs_webhook', '') -- Discord webhook U
 Config.DiscordUsername = GetConvar('pixel_logs_username', 'Server Logs') -- Username for the webhook
 Config.DiscordAvatar = GetConvar('pixel_logs_avatar', '') -- Avatar URL for the webhook
 
+-- Proxy Configuration
+Config.Proxy = {
+    Enabled = GetConvar('pixel_logs_proxy_enabled', 'false') == 'true',
+    URL = GetConvar('pixel_logs_proxy_url', ''),
+    Username = GetConvar('pixel_logs_proxy_username', ''),
+    Password = GetConvar('pixel_logs_proxy_password', '')
+}
+
 -- Debug Configuration
 Config.Debug = {
     Enabled = GetConvar('pixel_logs_debug', 'false') == 'true',
