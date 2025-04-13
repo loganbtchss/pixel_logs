@@ -127,9 +127,27 @@ end)
 
 -- Resource Start/Stop Logging
 AddEventHandler('onResourceStart', function(resourceName)
-    Utils.SendToDiscord('player_resources', Utils.FormatMessage('player_resources', {resource = resourceName, action = 'started'}))
+    if Config.LogTypes['player_resources'] then
+        local data = {
+            resource = resourceName,
+            action = 'started',
+            time = os.date('%Y-%m-%d %H:%M:%S')
+        }
+        
+        local message = Utils.FormatMessage('player_resources', 'Resource **{resource}** has been {action}', data)
+        Utils.SendToDiscord('player_resources', message)
+    end
 end)
 
 AddEventHandler('onResourceStop', function(resourceName)
-    Utils.SendToDiscord('player_resources', Utils.FormatMessage('player_resources', {resource = resourceName, action = 'stopped'}))
+    if Config.LogTypes['player_resources'] then
+        local data = {
+            resource = resourceName,
+            action = 'stopped',
+            time = os.date('%Y-%m-%d %H:%M:%S')
+        }
+        
+        local message = Utils.FormatMessage('player_resources', 'Resource **{resource}** has been {action}', data)
+        Utils.SendToDiscord('player_resources', message)
+    end
 end) 

@@ -133,9 +133,9 @@ function Utils.FormatMessage(type, message, data)
     
     local formatted = message
     if data and type(data) == 'table' then
-        SafeTableIterate(data, function(key, value)
+        for key, value in pairs(data) do
             formatted = formatted:gsub('{' .. key .. '}', tostring(value))
-        end)
+        end
     end
     
     return formatted
@@ -196,8 +196,8 @@ function Utils.CreateEmbed(type, message, source, customColor)
             -- Add message-specific fields
             for _, field in ipairs(messageConfig.fields) do
                 local value = field.value
-                if type(message) == 'table' then
-                    for k, v in pairs(message) do
+                if data and type(data) == 'table' then
+                    for k, v in pairs(data) do
                         value = value:gsub('{' .. k .. '}', tostring(v))
                     end
                 end
