@@ -14,22 +14,25 @@ An advanced Discord logging system for FiveM and RedM servers, providing compreh
   - Custom events
 
 - **Advanced Debug System**
-  - Debug logging with file downloads
+  - In-memory debug logging
   - Separate debug webhook support
   - Configurable log retention
-  - Detailed error tracking
+  - Detailed error tracking with stack traces
+  - Automatic error catching and reporting
 
 - **Customizable Configuration**
   - Per-event type toggling
   - Customizable message templates
   - Configurable identifier display
   - Custom embed colors
+  - Player avatar support
 
 - **Modern Discord Integration**
-  - Rich embeds
+  - Rich embeds with dynamic fields
   - Customizable webhook settings
   - Clean message formatting
   - Player identifier integration
+  - Automatic timestamp handling
 
 ## Installation
 
@@ -84,6 +87,15 @@ setr pixel_logs_xbox "true" # Show Xbox ID
 setr pixel_logs_live "true" # Show Live ID
 setr pixel_logs_fivem "true" # Show FiveM ID
 setr pixel_logs_ip "false" # Show IP address
+```
+
+#### Avatar Settings
+```cfg
+setr pixel_logs_avatars "true" # Enable player avatars
+setr pixel_logs_default_avatar "https://i.imgur.com/example.png" # Default avatar URL
+setr pixel_logs_steam_avatar "true" # Use Steam avatars
+setr pixel_logs_discord_avatar "true" # Use Discord avatars
+setr pixel_logs_fivem_avatar "true" # Use FiveM avatars
 ```
 
 ## Usage
@@ -146,8 +158,8 @@ exports['pixel_logs']:AddDebugLog('error', 'Something went wrong', {
 Debug logs will:
 - Be stored in memory (up to the configured maximum)
 - Create a Discord embed with the log information
-- Include a download button for the full log
-- Include any additional data provided
+- Include detailed error information and stack traces
+- Use a separate webhook if configured
 
 ## Message Templates
 
@@ -155,9 +167,17 @@ You can customize the message format for each event type in the config:
 
 ```lua
 Config.Messages = {
-    ['player_join'] = '**{player}** has joined the server',
-    ['player_leave'] = '**{player}** has left the server',
-    -- ... other message templates
+    ['player_join'] = {
+        title = 'Player Joined',
+        description = '**{player}** has joined the server',
+        fields = {
+            {
+                name = 'Player Information',
+                value = '```\nName: {player}\nID: {id}\n```',
+                inline = false
+            }
+        }
+    }
 }
 ```
 
@@ -169,6 +189,11 @@ Available placeholders vary by event type:
 - `{command}` - Command used
 - `{resource}` - Resource name
 - `{action}` - Action performed
+- `{time}` - Timestamp
+- `{id}` - Player ID
+- `{location}` - Location coordinates
+- `{killer}` - Killer name
+- `{weapon}` - Weapon name
 
 ## Support
 
