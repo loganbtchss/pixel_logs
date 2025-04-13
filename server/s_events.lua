@@ -362,9 +362,52 @@ end)
 
 -- Resource Start/Stop Logging
 AddEventHandler('onResourceStart', function(resourceName)
-    -- Skip logging for pixel_logs itself
-    if resourceName == GetCurrentResourceName() then return end
+    -- Special handling for pixel_logs itself
+    if resourceName == GetCurrentResourceName() then
+        -- Only send startup embed if we haven't already sent one
+        if not _G.pixel_logs_startup_sent then
+            _G.pixel_logs_startup_sent = true
+            
+            if Config.LogTypes['player_resources'] then
+                local data = {
+                    resource = resourceName,
+                    action = 'started',
+                    time = os.date('%Y-%m-%d %H:%M:%S')
+                }
+                
+                local message = Utils.FormatMessage('player_resources', Config.Messages['player_resources'].description, data)
+                local embed = {
+                    title = Config.Messages['player_resources'].title,
+                    description = message,
+                    color = Config.Colors['player_resources'],
+                    timestamp = os.date('!%Y-%m-%dT%H:%M:%SZ'),
+                    footer = {
+                        text = 'Server Logs'
+                    },
+                    fields = {}
+                }
+                
+                -- Add resource info fields
+                table.insert(embed.fields, {
+                    name = 'Resource Information',
+                    value = string.format('```\nName: %s\nAction: %s\n```', data.resource, data.action),
+                    inline = false
+                })
+                
+                -- Add timestamp field
+                table.insert(embed.fields, {
+                    name = 'Time',
+                    value = data.time,
+                    inline = true
+                })
+                
+                Utils.SendEmbedToDiscord(embed)
+            end
+        end
+        return
+    end
     
+    -- Handle other resources
     if Config.LogTypes['player_resources'] then
         local data = {
             resource = resourceName,
