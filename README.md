@@ -1,6 +1,9 @@
 # Pixel Logs
 This is an advanced Discord logging system for FiveM and RedM servers, providing comprehensive logging capabilities with a clean and modern interface.
 
+> [!CAUTION]
+> This resource is not yet ready for production use and is only public at this stage for transparency. Please check back in a few days for an official release :D 
+
 ## 📑 Table of Contents
 
 - [🚀 Features](#-features)
