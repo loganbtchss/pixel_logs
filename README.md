@@ -7,66 +7,20 @@ This is an advanced Discord logging system for FiveM and RedM servers, providing
 ## 📑 Table of Contents
 
 - [🚀 Features](#-features)
-  - [📝 Event Logging](#-event-logging)
-  - [🐛 Debug System](#-debug-system)
-  - [⚙️ Configuration](#️-configuration)
-  - [💬 Discord Integration](#-discord-integration)
 - [📦 Installation](#-installation)
-- [⚙️ Configuration](#️-configuration-1)
-  - [Using pixel_convars.cfg](#using-pixel_convarscfg)
-  - [Configuration Categories](#configuration-categories)
-- [💻 Usage](#-usage)
-  - [Basic Logging](#basic-logging)
-  - [Custom Logs](#custom-logs)
-  - [Custom Embeds](#custom-embeds)
-  - [Debug Logging](#debug-logging)
-  - [Proxy Support](#proxy-support)
-- [📝 Message Templates](#-message-templates)
-  - [Available Placeholders](#available-placeholders)
+- [📚 Documentation](#-documentation)
 - [❓ Support](#-support)
 - [📄 License](#-license)
 - [👥 Credits](#-credits)
 
 ## 🚀 Features
 
-### 📝 Event Logging
-- Player joins/leaves with detailed information
-- Chat messages with channel tracking
-- Player deaths with:
-  - Death cause (Player Kill, Vehicle Accident, Animal Attack, Fire, Explosion, Drowning, Fall Damage, Suicide, Environmental)
-  - Weapon/Death method details
-  - Location and coordinates
-  - Killer information (if applicable)
-- Command usage with arguments
-- Administrative actions (bans/kicks/warns) with:
-  - Duration support for bans
-  - Reason tracking
-  - Admin information
-  - Player identifiers
-- Resource start/stop events
-- Custom event support
-- txAdmin event support
-
-### 🐛 Debug System
-> [!IMPORTANT]
-> Debug logging requires the `pixel_logs_debug` convar to be set to `true`.
-
-- In-memory debug logging with configurable retention
-- Separate debug webhook for critical errors
-- Detailed error tracking with stack traces
-- Automatic error catching and reporting
-- Resource information included in error logs
-
-### ⚙️ Configuration
-> [!TIP]
-> All configuration is done through the `pixel_convars.cfg` file.
-
-- Per-event type toggling
-- Customizable message templates
-- Configurable identifier display
-- Custom embed colors
-- Player avatar support
-- Proxy support for Discord webhooks
+- **Comprehensive Event Logging**: Player joins/leaves, chat messages, deaths, commands, administrative actions, resource events, and more
+- **Debug System**: In-memory debug logging with configurable retention and detailed error tracking
+- **Customizable Configuration**: Per-event type toggling, customizable message templates, and more
+- **Discord Integration**: Clean and modern Discord embeds with player avatars and detailed information
+- **Proxy Support**: Route Discord webhook requests through a proxy server
+- **txAdmin Integration**: Log txAdmin events directly to Discord
 
 ## 📦 Installation
 
@@ -77,246 +31,19 @@ This is an advanced Discord logging system for FiveM and RedM servers, providing
 5. Edit the `pixel_convars.cfg` file to set your desired values
 6. Add `exec "pixel_convars.cfg"` to your server.cfg
 
-## ⚙️ Configuration
+## 📚 Documentation
 
-### Using pixel_convars.cfg
-> [!TIP]
-> For easier configuration, use the included `pixel_convars.cfg` file located in the `temp` directory.
+For detailed information about Pixel Logs, please refer to the following documentation:
 
-1. Copy the `temp/pixel_convars.cfg` file to your server's config directory
-2. Edit the file to set your desired values (especially the required webhook URL)
-3. Add the following line to your server.cfg:
-
-```cfg
-exec "pixel_convars.cfg"
-```
-
-This approach keeps your server.cfg clean and organized, as all Pixel Logs settings are contained in a separate file.
-
-For more details, see the [temp/CONVARS_README.md](temp/CONVARS_README.md) file.
-
-### Configuration Categories
-
-The `pixel_convars.cfg` file contains the following categories of settings:
-
-#### Required Convars
-> [!IMPORTANT]
-> These convars are **mandatory** for the resource to start. If any of these are not set, the resource will not initialize.
-
-```cfg
-set pixel_logs_webhook "YOUR_DISCORD_WEBHOOK_URL" # Required: Discord webhook URL for logging
-```
-
-#### Webhook Settings
-```cfg
-set pixel_logs_username "Server Logs" # Webhook username
-set pixel_logs_avatar "" # Webhook avatar URL
-```
-
-#### Proxy Settings
-```cfg
-set pixel_logs_proxy_enabled "false" # Enable proxy support
-set pixel_logs_proxy_url "" # Proxy URL (e.g., http://proxy.example.com:8080)
-set pixel_logs_proxy_username "" # Proxy username (if required)
-set pixel_logs_proxy_password "" # Proxy password (if required)
-```
-
-#### Debug Settings
-```cfg
-set pixel_logs_debug "false" # Enable debug logging
-set pixel_logs_debug_maxlogs "100" # Maximum number of debug logs to keep
-set pixel_logs_debug_webhook "" # Optional separate webhook for debug logs
-set pixel_logs_debug_noversion "false" # Skip version checks while keeping debug logging active
-```
-
-#### Log Type Toggles
-```cfg
-set pixel_logs_join "true" # Player join logs
-set pixel_logs_leave "true" # Player leave logs
-set pixel_logs_death "true" # Player death logs
-set pixel_logs_chat "true" # Chat message logs
-set pixel_logs_bans "true" # Ban logs
-set pixel_logs_kicks "true" # Kick logs
-set pixel_logs_warns "true" # Warning logs
-set pixel_logs_commands "true" # Command usage logs
-set pixel_logs_connections "true" # Connection logs
-set pixel_logs_resources "true" # Resource start/stop logs
-```
-
-#### txAdmin Log Type Toggles
-```cfg
-set pixel_logs_txadmin_announcement "true" # txAdmin announcement logs
-set pixel_logs_txadmin_shutdown "true" # txAdmin shutdown logs
-set pixel_logs_txadmin_restart_skipped "true" # txAdmin restart skipped logs
-set pixel_logs_txadmin_direct_message "true" # txAdmin direct message logs
-set pixel_logs_txadmin_player_healed "true" # txAdmin player healed logs
-set pixel_logs_txadmin_whitelist_preapproval "true" # txAdmin whitelist preapproval logs
-set pixel_logs_txadmin_whitelist_request "true" # txAdmin whitelist request logs
-set pixel_logs_txadmin_action_revoked "true" # txAdmin action revoked logs
-set pixel_logs_txadmin_admin_auth "true" # txAdmin admin auth logs
-set pixel_logs_txadmin_admins_updated "true" # txAdmin admins updated logs
-set pixel_logs_txadmin_config_changed "true" # txAdmin config changed logs
-set pixel_logs_txadmin_console_command "true" # txAdmin console command logs
-```
-
-#### Identifier Settings
-```cfg
-set pixel_logs_steam "true" # Show Steam ID
-set pixel_logs_discord "true" # Show Discord ID
-set pixel_logs_license "true" # Show License
-set pixel_logs_xbox "true" # Show Xbox ID
-set pixel_logs_live "true" # Show Live ID
-set pixel_logs_fivem "true" # Show FiveM ID
-set pixel_logs_ip "false" # Show IP address
-```
-
-#### Avatar Settings
-```cfg
-set pixel_logs_avatars "true" # Enable player avatars
-set pixel_logs_default_avatar "https://i.imgur.com/example.png" # Default avatar URL
-set pixel_logs_steam_avatar "true" # Use Steam avatars
-set pixel_logs_discord_avatar "true" # Use Discord avatars
-set pixel_logs_fivem_avatar "true" # Use FiveM avatars
-```
-
-## 💻 Usage
-
-### Basic Logging
-
-> [!NOTE]
-> Basic logging works out of the box with no additional setup required.
-
-The resource automatically logs various events based on your configuration. No additional setup is required for basic logging.
-
-### Custom Logs
-
-You can send custom logs from any resource using the exports:
-
-```lua
--- Server-side
-exports['pixel_logs']:SendCustomLog('custom_type', 'Your message', source, color)
-
--- Client-side
-exports['pixel_logs']:SendCustomLog('custom_type', 'Your message', color)
-```
-
-### Custom Embeds
-
-For more control over the embed appearance:
-
-```lua
--- Server-side
-exports['pixel_logs']:SendCustomEmbed({
-    color = 16711680,
-    title = 'Custom Title',
-    description = 'Custom Description',
-    fields = {
-        {name = 'Field 1', value = 'Value 1', inline = true},
-        {name = 'Field 2', value = 'Value 2', inline = true}
-    }
-})
-
--- Client-side
-exports['pixel_logs']:SendCustomEmbed({
-    color = 16711680,
-    title = 'Custom Title',
-    description = 'Custom Description',
-    fields = {
-        {name = 'Field 1', value = 'Value 1', inline = true},
-        {name = 'Field 2', value = 'Value 2', inline = true}
-    }
-})
-```
-
-### Debug Logging
-
-> [!CAUTION]
-> Debug logging should only be enabled when needed as it can generate a large number of logs.
-
-When debug logging is enabled, you can add debug logs:
-
-```lua
-exports['pixel_logs']:AddDebugLog('error', 'Something went wrong', {
-    error = 'Detailed error message',
-    stack = 'Stack trace'
-})
-```
-
-Debug logs will:
-- Be stored in memory (up to the configured maximum)
-- Create a Discord embed with the log information
-- Include detailed error information and stack traces
-- Use a separate webhook if configured
-
-### Proxy Support
-
-> [!TIP]
-> Proxy support is useful when your server is behind a firewall or when you need to route Discord webhook requests through a specific proxy server.
-
-To enable proxy support, edit the `pixel_convars.cfg` file and set:
-```cfg
-set pixel_logs_proxy_enabled "true"
-set pixel_logs_proxy_url "http://proxy.example.com:8080"
-set pixel_logs_proxy_username "proxyuser"
-set pixel_logs_proxy_password "proxypass"
-```
-
-## 📝 Message Templates
-
-> [!TIP]
-> You can customize the message format for each event type in the config.
-
-```lua
-Config.Messages = {
-    ['player_death'] = {
-        title = 'Player Death',
-        description = '**{player}** has died',
-        fields = {
-            {
-                name = 'Player Information',
-                value = '```\nName: {player}\nID: {id}\n```',
-                inline = false
-            },
-            {
-                name = 'Death Cause',
-                value = '{cause}',
-                inline = true
-            },
-            {
-                name = 'Location',
-                value = '{location}',
-                inline = true
-            },
-            {
-                name = 'Coordinates',
-                value = '{coords}',
-                inline = false
-            }
-        }
-    }
-}
-```
-
-### Available Placeholders
-
-| Placeholder | Description | Example |
-|------------|-------------|---------|
-| `{player}` | Player name | Timmy Turner |
-| `{admin}` | Admin name | Admin |
-| `{reason}` | Reason for action | Breaking rules |
-| `{message}` | Chat message | Hello world! |
-| `{command}` | Command used | /kick |
-| `{resource}` | Resource name | pixel_logs |
-| `{action}` | Action performed | started |
-| `{time}` | Timestamp | 2024-04-13 12:00:00 |
-| `{id}` | Player ID | 1 |
-| `{location}` | Location coordinates | 123.45, 67.89, 10.0 |
-| `{killer}` | Killer name | Player2 |
-| `{weapon}` | Weapon name | WEAPON_PISTOL |
-| `{cause}` | Death cause | Player Kill |
-| `{coords}` | Exact coordinates | X: 123.45, Y: 67.89, Z: 10.0 |
-| `{duration}` | Ban duration | 7 days |
-| `{channel}` | Chat channel | global |
+- [Installation Guide](docs/installation.md) - Detailed installation instructions
+- [Configuration Guide](docs/configuration.md) - How to configure Pixel Logs
+- [Events Guide](docs/events.md) - Information about events and exports
+- [Customization Guide](docs/customization.md) - How to customize message templates and appearance
+- [Debug Guide](docs/debug.md) - How to use the debug system
+- [Proxy Support Guide](docs/proxy.md) - How to use proxy support
+- [Troubleshooting Guide](docs/troubleshooting.md) - Solutions for common issues
+- [Integration Guide](docs/integration.md) - How to integrate with other resources
+- [Convars Guide](docs/convars.md) - Detailed information about convars
 
 ## ❓ Support
 
