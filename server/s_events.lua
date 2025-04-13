@@ -498,4 +498,81 @@ AddEventHandler('pixel_logs:adminAction', function(data)
     })
     
     Utils.SendEmbedToDiscord(embed)
+end)
+
+-- txAdmin Event Monitoring
+AddEventHandler('txAdmin:events:serverShuttingDown', function(data)
+    if not Config.Events.Resources then return end
+    
+    local embed = Utils.CreateEmbed('server_shutdown', 'Server is shutting down', nil, 16711680, {
+        author = data.author,
+        message = data.message,
+        delay = string.format('%d seconds', data.delay / 1000)
+    })
+    
+    Utils.SendEmbedToDiscord(embed)
+end)
+
+AddEventHandler('txAdmin:events:scheduledRestart', function(data)
+    if not Config.Events.Resources then return end
+    
+    local embed = Utils.CreateEmbed('scheduled_restart', 'Scheduled server restart', nil, 16711680, {
+        seconds = data.secondsRemaining,
+        message = data.translatedMessage
+    })
+    
+    Utils.SendEmbedToDiscord(embed)
+end)
+
+AddEventHandler('txAdmin:events:playerBanned', function(data)
+    if not Config.Events.Bans then return end
+    
+    local embed = Utils.CreateEmbed('player_banned', 'Player banned', data.targetNetId, 16711680, {
+        author = data.author,
+        reason = data.reason,
+        duration = data.durationTranslated or 'Permanent',
+        target = data.targetName,
+        identifiers = table.concat(data.targetIds, '\n'),
+        hwids = table.concat(data.targetHwids, '\n')
+    })
+    
+    Utils.SendEmbedToDiscord(embed)
+end)
+
+AddEventHandler('txAdmin:events:playerKicked', function(data)
+    if not Config.Events.Kicks then return end
+    
+    local embed = Utils.CreateEmbed('player_kicked', 'Player kicked', data.target, 16711680, {
+        author = data.author,
+        reason = data.reason,
+        message = data.dropMessage
+    })
+    
+    Utils.SendEmbedToDiscord(embed)
+end)
+
+AddEventHandler('txAdmin:events:playerWarned', function(data)
+    if not Config.Events.Warns then return end
+    
+    local embed = Utils.CreateEmbed('player_warned', 'Player warned', data.targetNetId, 16711680, {
+        author = data.author,
+        reason = data.reason,
+        target = data.targetName,
+        identifiers = table.concat(data.targetIds, '\n')
+    })
+    
+    Utils.SendEmbedToDiscord(embed)
+end)
+
+AddEventHandler('txAdmin:events:whitelistPlayer', function(data)
+    if not Config.Events.Whitelist then return end
+    
+    local embed = Utils.CreateEmbed('whitelist_update', 'Whitelist status changed', nil, 16711680, {
+        action = data.action,
+        player = data.playerName,
+        admin = data.adminName,
+        license = data.license
+    })
+    
+    Utils.SendEmbedToDiscord(embed)
 end) 

@@ -199,6 +199,132 @@ Config.Messages = {
                 inline = true
             }
         }
+    },
+    ['server_shutdown'] = {
+        title = 'Server Shutdown',
+        description = 'Server is shutting down',
+        fields = {
+            {
+                name = 'Author',
+                value = '{author}',
+                inline = true
+            },
+            {
+                name = 'Delay',
+                value = '{delay}',
+                inline = true
+            },
+            {
+                name = 'Message',
+                value = '{message}',
+                inline = false
+            }
+        }
+    },
+    ['scheduled_restart'] = {
+        title = 'Scheduled Restart',
+        description = 'Server will restart in {seconds} seconds',
+        fields = {
+            {
+                name = 'Message',
+                value = '{message}',
+                inline = false
+            }
+        }
+    },
+    ['player_banned'] = {
+        title = 'Player Banned',
+        description = '**{target}** has been banned',
+        fields = {
+            {
+                name = 'Admin',
+                value = '{author}',
+                inline = true
+            },
+            {
+                name = 'Duration',
+                value = '{duration}',
+                inline = true
+            },
+            {
+                name = 'Reason',
+                value = '{reason}',
+                inline = false
+            },
+            {
+                name = 'Identifiers',
+                value = '```\n{identifiers}\n```',
+                inline = false
+            },
+            {
+                name = 'Hardware IDs',
+                value = '```\n{hwids}\n```',
+                inline = false
+            }
+        }
+    },
+    ['player_kicked'] = {
+        title = 'Player Kicked',
+        description = '**{target}** has been kicked',
+        fields = {
+            {
+                name = 'Admin',
+                value = '{author}',
+                inline = true
+            },
+            {
+                name = 'Reason',
+                value = '{reason}',
+                inline = false
+            },
+            {
+                name = 'Kick Message',
+                value = '{message}',
+                inline = false
+            }
+        }
+    },
+    ['player_warned'] = {
+        title = 'Player Warned',
+        description = '**{target}** has been warned',
+        fields = {
+            {
+                name = 'Admin',
+                value = '{author}',
+                inline = true
+            },
+            {
+                name = 'Reason',
+                value = '{reason}',
+                inline = false
+            },
+            {
+                name = 'Identifiers',
+                value = '```\n{identifiers}\n```',
+                inline = false
+            }
+        }
+    },
+    ['whitelist_update'] = {
+        title = 'Whitelist Update',
+        description = 'Whitelist status changed for **{player}**',
+        fields = {
+            {
+                name = 'Action',
+                value = '{action}',
+                inline = true
+            },
+            {
+                name = 'Admin',
+                value = '{admin}',
+                inline = true
+            },
+            {
+                name = 'License',
+                value = '{license}',
+                inline = false
+            }
+        }
     }
 }
 

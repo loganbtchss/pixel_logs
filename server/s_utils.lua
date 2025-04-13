@@ -293,10 +293,38 @@ function Utils.GetAllDebugLogs()
     return debugLogs
 end
 
-function Utils.IsTxAdmin(source)
-    if not source then return false end
-    local identifiers = Utils.GetPlayerIdentifiers(source)
-    return identifiers.license == 'txAdmin' or identifiers.license == 'txadmin'
+function Utils.SendEmbedToDiscord(embed)
+    if not embed then return end
+    
+    -- Ensure embed has required fields
+    embed.timestamp = embed.timestamp or os.date('!%Y-%m-%dT%H:%M:%SZ')
+    embed.footer = embed.footer or {text = 'Server Logs'}
+    
+    -- Prepare the webhook payload
+    local payload = {
+        username = Config.Webhook.Username,
+        avatar_url = Config.Webhook.Avatar,
+        embeds = {embed}
+    }
+    
+    -- Encode the payload
+    local jsonPayload = SafeJsonEncode(payload)
+    if not jsonPayload then
+        exports['pixel_logs']:CatchError('Failed to encode webhook payload', 'SendEmbedToDiscord')
+        return
+    end
+    
+    -- Prepare headers
+    local headers = {
+        ['Content-Type'] = 'application/json'
+    }
+    
+    -- Send the webhook request
+    PerformHttpRequest(Config.Webhook.Url, function(err, text, headers)
+        if err then
+            exports['pixel_logs']:CatchError('Failed to send webhook: ' .. tostring(err), 'SendEmbedToDiscord')
+        end
+    end, 'POST', jsonPayload, headers)
 end
 
 -- Export the Utils table
