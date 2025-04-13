@@ -10,7 +10,8 @@ version '1.04122025'
 lua54 'yes'
 
 shared_scripts {
-    'config.lua'
+    'configs/config.lua',
+    'configs/messages.lua'
 }
 
 client_scripts {

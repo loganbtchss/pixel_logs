@@ -17,11 +17,26 @@ AddEventHandler('pixel_logs:playerLeave', function()
 end)
 
 -- Player Death Event
-RegisterNetEvent('pixel_logs:playerDeath')
-AddEventHandler('pixel_logs:playerDeath', function()
+AddEventHandler('playerDied', function(data)
+    if not Config.LogTypes['player_death'] then return end
+    
     local source = source
-    local name = GetPlayerName(source)
-    Utils.SendToDiscord('player_death', Utils.FormatMessage('player_death', {player = name}), source)
+    local playerName = GetPlayerName(source)
+    local weaponHash = data.weaponHash
+    local weaponName = WeaponNames[tostring(weaponHash)] or 'Unknown'
+    local killer = data.killer and GetPlayerName(data.killer) or 'Unknown'
+    local location = data.location or 'Unknown'
+    local isTxAdmin = Utils.IsTxAdmin(data.killer)
+
+    local message = Utils.FormatMessage('player_death', {
+        player = playerName,
+        id = source,
+        location = location,
+        killer = isTxAdmin and 'txAdmin' or killer,
+        weapon = weaponName
+    })
+
+    Utils.SendToDiscord('player_death', message, source)
 end)
 
 -- Command Event
@@ -33,30 +48,58 @@ AddEventHandler('pixel_logs:playerCommand', function(command)
 end)
 
 -- Ban Event
-RegisterNetEvent('pixel_logs:playerBan')
-AddEventHandler('pixel_logs:playerBan', function(target, reason)
-    local source = source
-    local admin = GetPlayerName(source)
-    local targetName = GetPlayerName(target)
-    Utils.SendToDiscord('player_bans', Utils.FormatMessage('player_bans', {player = targetName, admin = admin, reason = reason}), target)
+AddEventHandler('playerBanned', function(source, target, reason, duration)
+    if not Config.LogTypes['player_bans'] then return end
+    
+    local adminName = GetPlayerName(source)
+    local playerName = GetPlayerName(target)
+    local isTxAdmin = Utils.IsTxAdmin(source)
+
+    local message = Utils.FormatMessage('player_bans', {
+        player = playerName,
+        id = target,
+        admin = isTxAdmin and 'txAdmin' or adminName,
+        duration = duration,
+        reason = reason
+    })
+
+    Utils.SendToDiscord('player_bans', message, target)
 end)
 
 -- Kick Event
-RegisterNetEvent('pixel_logs:playerKick')
-AddEventHandler('pixel_logs:playerKick', function(target, reason)
-    local source = source
-    local admin = GetPlayerName(source)
-    local targetName = GetPlayerName(target)
-    Utils.SendToDiscord('player_kicks', Utils.FormatMessage('player_kicks', {player = targetName, admin = admin, reason = reason}), target)
+AddEventHandler('playerKicked', function(source, target, reason)
+    if not Config.LogTypes['player_kicks'] then return end
+    
+    local adminName = GetPlayerName(source)
+    local playerName = GetPlayerName(target)
+    local isTxAdmin = Utils.IsTxAdmin(source)
+
+    local message = Utils.FormatMessage('player_kicks', {
+        player = playerName,
+        id = target,
+        admin = isTxAdmin and 'txAdmin' or adminName,
+        reason = reason
+    })
+
+    Utils.SendToDiscord('player_kicks', message, target)
 end)
 
 -- Warn Event
-RegisterNetEvent('pixel_logs:playerWarn')
-AddEventHandler('pixel_logs:playerWarn', function(target, reason)
-    local source = source
-    local admin = GetPlayerName(source)
-    local targetName = GetPlayerName(target)
-    Utils.SendToDiscord('player_warns', Utils.FormatMessage('player_warns', {player = targetName, admin = admin, reason = reason}), target)
+AddEventHandler('playerWarned', function(source, target, reason)
+    if not Config.LogTypes['player_warns'] then return end
+    
+    local adminName = GetPlayerName(source)
+    local playerName = GetPlayerName(target)
+    local isTxAdmin = Utils.IsTxAdmin(source)
+
+    local message = Utils.FormatMessage('player_warns', {
+        player = playerName,
+        id = target,
+        admin = isTxAdmin and 'txAdmin' or adminName,
+        reason = reason
+    })
+
+    Utils.SendToDiscord('player_warns', message, target)
 end)
 
 -- Resource Start/Stop Logging

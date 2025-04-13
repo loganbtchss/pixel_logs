@@ -4,6 +4,54 @@ local Utils = {}
 local debugLogs = {}
 local maxDebugLogs = Config.Debug.MaxLogs
 
+-- Avatar Cache
+local avatarCache = {}
+
+function Utils.GetPlayerAvatar(source, identifierType, identifier)
+    if not Config.Avatars.Enabled then return Config.Avatars.Default end
+    
+    -- Check cache first
+    local cacheKey = identifierType .. ':' .. identifier
+    if avatarCache[cacheKey] then
+        return avatarCache[cacheKey]
+    end
+    
+    -- Get avatar based on identifier type
+    local avatarUrl = Config.Avatars.Default
+    
+    if Config.Avatars.Types[identifierType] then
+        if identifierType == 'steam' then
+            local steamId = identifier:gsub('steam:', '')
+            avatarUrl = string.format('https://steamcommunity.com/profiles/%s/?xml=1', steamId)
+            
+            -- Make HTTP request to get Steam avatar
+            PerformHttpRequest(avatarUrl, function(err, text, headers)
+                if not err and text then
+                    local avatarHash = text:match('<avatarFull>.-steamcommunity.com/public/images/avatars/(.-)</avatarFull>')
+                    if avatarHash then
+                        avatarUrl = string.format('https://steamcommunity.com/public/images/avatars/%s', avatarHash)
+                        avatarCache[cacheKey] = avatarUrl
+                    end
+                end
+            end, 'GET', '', {})
+            
+        elseif identifierType == 'discord' then
+            local discordId = identifier:gsub('discord:', '')
+            -- Discord avatars require the actual avatar hash, which we don't have
+            -- We'll use the default avatar for now
+            avatarUrl = string.format('https://cdn.discordapp.com/embed/avatars/0.png')
+            
+        elseif identifierType == 'fivem' then
+            local fivemId = identifier:gsub('fivem:', '')
+            avatarUrl = string.format('https://forum.cfx.re/user_avatar/forum.cfx.re/%s/240.png', fivemId)
+        end
+    end
+    
+    -- Cache the result
+    avatarCache[cacheKey] = avatarUrl
+    return avatarUrl
+end
+
 function Utils.GetPlayerIdentifiers(source)
     local identifiers = {}
     local numIds = GetNumPlayerIdentifiers(source)
@@ -22,20 +70,25 @@ function Utils.GetPlayerIdentifiers(source)
 end
 
 function Utils.FormatMessage(type, data)
-    local message = Config.Messages[type]
-    if not message then return nil end
+    local messageConfig = Config.Messages[type]
+    if not messageConfig then return nil end
     
+    local message = messageConfig.description
     for k, v in pairs(data) do
-        message = message:gsub('{' .. k .. '}', v)
+        message = message:gsub('{' .. k .. '}', tostring(v))
     end
     
     return message
 end
 
 function Utils.CreateEmbed(type, message, source, customColor)
+    local messageConfig = Config.Messages[type]
+    if not messageConfig then return nil end
+    
     local embed = {
         color = customColor or Config.Colors[type] or 16777215,
-        title = message,
+        title = messageConfig.title,
+        description = message,
         timestamp = os.date('!%Y-%m-%dT%H:%M:%SZ'),
         footer = {
             text = 'Server Logs'
@@ -44,11 +97,28 @@ function Utils.CreateEmbed(type, message, source, customColor)
     
     if source then
         local identifiers = Utils.GetPlayerIdentifiers(source)
-        local fields = {}
+        local avatarUrl = Config.Avatars.Default
         
+        -- Try to get player avatar
+        if Config.Avatars.Enabled then
+            for identifierType, enabled in pairs(Config.Avatars.Types) do
+                if enabled and identifiers[identifierType] then
+                    avatarUrl = Utils.GetPlayerAvatar(source, identifierType, identifiers[identifierType])
+                    break
+                end
+            end
+        end
+        
+        -- Add avatar to embed
+        embed.thumbnail = {
+            url = avatarUrl
+        }
+        
+        -- Add identifier fields
+        local identifierFields = {}
         for identifierType, enabled in pairs(Config.Identifiers) do
             if enabled and identifiers[identifierType] then
-                fields[#fields + 1] = {
+                identifierFields[#identifierFields + 1] = {
                     name = identifierType:upper(),
                     value = identifiers[identifierType],
                     inline = true
@@ -56,7 +126,28 @@ function Utils.CreateEmbed(type, message, source, customColor)
             end
         end
         
-        if #fields > 0 then
+        -- Add message fields
+        if messageConfig.fields then
+            local fields = {}
+            
+            -- Add message-specific fields
+            for _, field in ipairs(messageConfig.fields) do
+                local value = field.value
+                for k, v in pairs(message) do
+                    value = value:gsub('{' .. k .. '}', tostring(v))
+                end
+                fields[#fields + 1] = {
+                    name = field.name,
+                    value = value,
+                    inline = field.inline
+                }
+            end
+            
+            -- Add identifier fields
+            for _, field in ipairs(identifierFields) do
+                fields[#fields + 1] = field
+            end
+            
             embed.fields = fields
         end
     end
@@ -148,6 +239,12 @@ end
 
 function Utils.GetAllDebugLogs()
     return debugLogs
+end
+
+function Utils.IsTxAdmin(source)
+    if not source then return false end
+    local identifiers = Utils.GetPlayerIdentifiers(source)
+    return identifiers.license == 'txAdmin' or identifiers.license == 'txadmin'
 end
 
 -- Export the Utils table

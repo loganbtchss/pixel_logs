@@ -9,8 +9,15 @@ AddEventHandler('playerDropped', function(reason)
 end)
 
 -- Player Death Event
-AddEventHandler('baseevents:onPlayerDied', function(killerId, deathData)
-    TriggerServerEvent('pixel_logs:playerDeath')
+AddEventHandler('baseevents:onPlayerDied', function(killerType, coords, killerId)
+    local weaponHash = GetPedCauseOfDeath(PlayerPedId())
+    local location = GetStreetNameFromHashKey(GetStreetNameAtCoord(coords.x, coords.y, coords.z))
+    
+    TriggerServerEvent('playerDied', {
+        weaponHash = weaponHash,
+        killer = killerId,
+        location = location
+    })
 end)
 
 -- Command Event

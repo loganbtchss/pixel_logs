@@ -26,34 +26,6 @@ Config.LogTypes = {
     ['player_resources'] = GetConvar('pixel_logs_resources', 'true') == 'true'
 }
 
--- Embed Colors
-Config.Colors = {
-    ['player_join'] = 65280, -- Green
-    ['player_leave'] = 16711680, -- Red
-    ['player_death'] = 16711680, -- Red
-    ['player_chat'] = 16776960, -- Yellow
-    ['player_bans'] = 16711680, -- Red
-    ['player_kicks'] = 16711680, -- Red
-    ['player_warns'] = 16776960, -- Yellow
-    ['player_commands'] = 16776960, -- Yellow
-    ['player_connections'] = 255, -- Blue
-    ['player_resources'] = 16776960 -- Yellow
-}
-
--- Message Templates
-Config.Messages = {
-    ['player_join'] = '**{player}** has joined the server',
-    ['player_leave'] = '**{player}** has left the server',
-    ['player_death'] = '**{player}** has died',
-    ['player_chat'] = '**{player}**: {message}',
-    ['player_bans'] = '**{player}** has been banned by **{admin}** for: {reason}',
-    ['player_kicks'] = '**{player}** has been kicked by **{admin}** for: {reason}',
-    ['player_warns'] = '**{player}** has been warned by **{admin}** for: {reason}',
-    ['player_commands'] = '**{player}** used command: {command}',
-    ['player_connections'] = '**{player}** {action} the server',
-    ['player_resources'] = 'Resource **{resource}** has been {action}'
-}
-
 -- Identifier Settings
 Config.Identifiers = {
     ['steam'] = GetConvar('pixel_logs_steam', 'true') == 'true',
@@ -63,4 +35,19 @@ Config.Identifiers = {
     ['live'] = GetConvar('pixel_logs_live', 'true') == 'true',
     ['fivem'] = GetConvar('pixel_logs_fivem', 'true') == 'true',
     ['ip'] = GetConvar('pixel_logs_ip', 'false') == 'true'
-} 
+}
+
+-- Avatar Configuration
+Config.Avatars = {
+    Enabled = GetConvar('pixel_logs_avatars', 'true') == 'true',
+    Default = GetConvar('pixel_logs_default_avatar', 'https://i.imgur.com/example.png'),
+    Types = {
+        ['steam'] = GetConvar('pixel_logs_steam_avatar', 'true') == 'true',
+        ['discord'] = GetConvar('pixel_logs_discord_avatar', 'true') == 'true',
+        ['fivem'] = GetConvar('pixel_logs_fivem_avatar', 'true') == 'true'
+    }
+}
+
+-- Include messages configuration
+Config.Messages = Messages
+Config.Colors = Colors
