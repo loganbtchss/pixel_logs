@@ -26,16 +26,14 @@ server_scripts {
     'server/s_chat.lua',
     'server/s_events.lua',
     'server/s_exports.lua',
-    'server/s_debug.lua',
-    'server/s_web.lua'
+    'server/s_debug.lua'
 }
 
 server_exports {
     'GetUtils',
     'SendCustomLog',
     'SendCustomEmbed',
-    'AddDebugLog',
-    'GetDebugLogUrl'
+    'AddDebugLog'
 }
 
 client_exports {
