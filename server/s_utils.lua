@@ -12,6 +12,10 @@ local maxDebugLogs = Config.Debug.MaxLogs
 -- Avatar Cache
 local avatarCache = {}
 
+-- Rate limiting
+local lastWebhookTime = 0
+local webhookCooldown = 1.0 -- 1 second cooldown between webhooks
+
 -- Helper function to safely get resource metadata
 local function GetResourceMetadataSafe(resource, key, index)
     local success, result = pcall(function()
@@ -224,6 +228,13 @@ end
 function Utils.AddDebugLog(type, message, data)
     if not Config.Debug.Enabled then return end
     
+    -- Skip sending embeds for webhook errors to prevent circular references
+    if type == 'error' and message and message:match('Failed to send webhook') then
+        -- Just log to console for webhook errors to prevent loops
+        print(string.format('^1[pixel_logs] Webhook Error: %s^0', message))
+        return
+    end
+    
     local log = {
         timestamp = os.date('%Y-%m-%d %H:%M:%S'),
         type = type,
@@ -232,57 +243,64 @@ function Utils.AddDebugLog(type, message, data)
     }
     
     table.insert(debugLogs, log)
-    local logIndex = #debugLogs
     
     -- Remove oldest log if we exceed the maximum
     if #debugLogs > maxDebugLogs then
         table.remove(debugLogs, 1)
     end
     
-    -- Get the debug log URL
-    local debugLogUrl = exports['pixel_logs']:GetDebugLogUrl(logIndex)
-    
-    -- Create debug embed
-    local embed = {
-        color = 16711680, -- Red color
-        title = 'Debug Log',
-        description = string.format('**Type:** %s\n**Message:** %s', type, message),
-        timestamp = os.date('!%Y-%m-%dT%H:%M:%SZ'),
-        fields = {
-            {
-                name = 'Timestamp',
-                value = log.timestamp,
-                inline = true
+    -- Only send embed for errors or when explicitly requested
+    if type == 'error' or (data and data.sendEmbed) then
+        -- Create detailed debug embed
+        local embed = {
+            color = 16711680, -- Red color
+            title = 'Debug Log',
+            description = string.format('**Type:** %s\n**Message:** %s\n**Timestamp:** %s', type, message, log.timestamp),
+            timestamp = os.date('!%Y-%m-%dT%H:%M:%SZ'),
+            fields = {
+                {
+                    name = 'Resource',
+                    value = GetCurrentResourceName(),
+                    inline = true
+                },
+                {
+                    name = 'Server ID',
+                    value = GetConvar('sv_hostname', 'Unknown'),
+                    inline = true
+                }
             }
         }
-    }
-    
-    -- Add data fields if present
-    if data then
-        for k, v in pairs(data) do
-            table.insert(embed.fields, {
-                name = k,
-                value = tostring(v),
-                inline = true
-            })
+        
+        -- Add data fields if present
+        if data then
+            for k, v in pairs(data) do
+                if k ~= 'sendEmbed' then -- Skip the sendEmbed flag
+                    if type(v) == 'table' then
+                        table.insert(embed.fields, {
+                            name = k,
+                            value = '```json\n' .. SafeJsonEncode(v) .. '\n```',
+                            inline = false
+                        })
+                    else
+                        table.insert(embed.fields, {
+                            name = k,
+                            value = tostring(v),
+                            inline = true
+                        })
+                    end
+                end
+            end
         end
+        
+        -- Use debug webhook if specified, otherwise use default webhook
+        local webhook = Config.Debug.Webhook ~= '' and Config.Debug.Webhook or Config.DiscordWebhook
+        
+        -- Send the embed using the appropriate webhook
+        local originalWebhook = Config.DiscordWebhook
+        Config.DiscordWebhook = webhook
+        Utils.SendEmbedToDiscord(embed)
+        Config.DiscordWebhook = originalWebhook
     end
-    
-    -- Add download button
-    embed.fields[#embed.fields + 1] = {
-        name = 'Download Log',
-        value = string.format('[Click Here](%s)', debugLogUrl),
-        inline = false
-    }
-    
-    -- Use debug webhook if specified, otherwise use default webhook
-    local webhook = Config.Debug.Webhook ~= '' and Config.Debug.Webhook or Config.DiscordWebhook
-    
-    PerformHttpRequest(webhook, function(err, text, headers) end, 'POST', json.encode({
-        username = Config.DiscordUsername,
-        avatar_url = Config.DiscordAvatar,
-        embeds = {embed}
-    }), { ['Content-Type'] = 'application/json' })
 end
 
 function Utils.GetDebugLog(index)
@@ -302,15 +320,15 @@ function Utils.SendEmbedToDiscord(embed)
     
     -- Prepare the webhook payload
     local payload = {
-        username = Config.Webhook.Username,
-        avatar_url = Config.Webhook.Avatar,
+        username = Config.DiscordUsername,
+        avatar_url = Config.DiscordAvatar,
         embeds = {embed}
     }
     
     -- Encode the payload
     local jsonPayload = SafeJsonEncode(payload)
     if not jsonPayload then
-        exports['pixel_logs']:CatchError('Failed to encode webhook payload', 'SendEmbedToDiscord')
+        print('^1[pixel_logs] Error: Failed to encode webhook payload^0')
         return
     end
     
@@ -319,12 +337,35 @@ function Utils.SendEmbedToDiscord(embed)
         ['Content-Type'] = 'application/json'
     }
     
+    -- Add proxy configuration if enabled
+    local options = {}
+    if Config.Proxy.Enabled and Config.Proxy.URL ~= '' then
+        options = {
+            proxy = Config.Proxy.URL,
+            proxyAuth = Config.Proxy.Username ~= '' and Config.Proxy.Password ~= '' and 
+                       string.format('%s:%s', Config.Proxy.Username, Config.Proxy.Password) or nil
+        }
+    end
+    
     -- Send the webhook request
-    PerformHttpRequest(Config.Webhook.Url, function(err, text, headers)
-        if err then
-            exports['pixel_logs']:CatchError('Failed to send webhook: ' .. tostring(err), 'SendEmbedToDiscord')
+    PerformHttpRequest(Config.DiscordWebhook, function(err, text, headers)
+        -- HTTP 204 is a success code (No Content)
+        if err == 204 then
+            -- Success, do nothing
+            return
         end
-    end, 'POST', jsonPayload, headers)
+        
+        -- Handle actual errors
+        if err then
+            -- Log to console only, not to Discord to prevent loops
+            print(string.format('^1[pixel_logs] Error: Failed to send webhook: %s^0', tostring(err)))
+            
+            -- If we hit rate limit (429), log a warning
+            if err == 429 then
+                print('^3[pixel_logs] Warning: Discord rate limit reached. Some logs may be delayed.^0')
+            end
+        end
+    end, 'POST', jsonPayload, headers, options)
 end
 
 -- Export the Utils table

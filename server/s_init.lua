@@ -127,27 +127,11 @@ local function CheckVersion()
             else
                 versionStatus = '^8API Error^0'
                 if Config.Debug.Enabled then
-                    exports['pixel_logs']:AddDebugLog('error', {
-                        title = 'Version Check Failed',
-                        description = 'Failed to parse GitHub API response. Please reference this log when requesting support.',
-                        fields = {
-                            {
-                                name = 'Error Details',
-                                value = string.format('```\nError: Failed to parse JSON response\nResponse: %s```', 
-                                    response or 'No response'
-                                ),
-                                inline = false
-                            },
-                            {
-                                name = 'Resource Info',
-                                value = string.format('```\nResource: %s\nVersion: %s\nServer: %s```',
-                                    GetCurrentResourceName(),
-                                    currentVersion,
-                                    GetConvarSafe('sv_hostname', 'Unknown')
-                                ),
-                                inline = false
-                            }
-                        }
+                    exports['pixel_logs']:CatchError('Failed to parse GitHub API response', 'VersionCheck', {
+                        response = response or 'No response',
+                        resource = GetCurrentResourceName(),
+                        version = currentVersion,
+                        server = GetConvarSafe('sv_hostname', 'Unknown')
                     })
                 end
             end
@@ -156,34 +140,10 @@ local function CheckVersion()
             
             -- Debug logging if enabled
             if Config.Debug.Enabled then
-                exports['pixel_logs']:AddDebugLog('error', {
-                    title = 'Version Check Failed',
-                    description = 'Failed to check for updates. Please reference this log when requesting support.',
-                    fields = {
-                        {
-                            name = 'Error Details',
-                            value = string.format('```\nError Code: %s\nResponse: %s\nHeaders: %s```', 
-                                err, 
-                                response or 'No response',
-                                json.encode(headers) or 'No headers'
-                            ),
-                            inline = false
-                        },
-                        {
-                            name = 'Resource Info',
-                            value = string.format('```\nResource: %s\nVersion: %s\nServer: %s```',
-                                GetCurrentResourceName(),
-                                currentVersion,
-                                GetConvarSafe('sv_hostname', 'Unknown')
-                            ),
-                            inline = false
-                        },
-                        {
-                            name = 'Support Note',
-                            value = 'When requesting support, please include this debug log and any relevant error messages you see in the console.',
-                            inline = false
-                        }
-                    }
+                exports['pixel_logs']:CatchError('Failed to check for updates', 'VersionCheck', {
+                    error = err,
+                    response = response or 'No response',
+                    headers = headers
                 })
             end
         end
@@ -213,25 +173,11 @@ CreateThread(function()
     if not success then
         print('^1[Pixel Logs] Fatal Error: ' .. tostring(err) .. '^0')
         if Config.Debug.Enabled then
-            exports['pixel_logs']:AddDebugLog('error', {
-                title = 'Fatal Error',
-                description = 'A fatal error occurred during initialization. Please reference this log when requesting support.',
-                fields = {
-                    {
-                        name = 'Error Details',
-                        value = string.format('```\n%s```', tostring(err)),
-                        inline = false
-                    },
-                    {
-                        name = 'Resource Info',
-                        value = string.format('```\nResource: %s\nVersion: %s\nServer: %s```',
-                            GetCurrentResourceName(),
-                            GetResourceMetadataSafe(GetCurrentResourceName(), 'version', 0),
-                            GetConvarSafe('sv_hostname', 'Unknown')
-                        ),
-                        inline = false
-                    }
-                }
+            exports['pixel_logs']:CatchError('Fatal Error', 'VersionCheck', {
+                error = tostring(err),
+                resource = GetCurrentResourceName(),
+                version = GetResourceMetadataSafe(GetCurrentResourceName(), 'version', 0),
+                server = GetConvarSafe('sv_hostname', 'Unknown')
             })
         end
     end

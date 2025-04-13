@@ -8,17 +8,32 @@ local Utils = exports['pixel_logs']:GetUtils()
 -- Helper function to safely get player name
 local function GetPlayerNameSafe(source)
     local success, name = pcall(GetPlayerName, source)
-    return success and name or 'Unknown'
+    if not success then
+        exports['pixel_logs']:CatchError('Failed to get player name', 'GetPlayerNameSafe', {
+            source = source,
+            error = name
+        })
+        return 'Unknown'
+    end
+    return name
 end
 
 -- Helper function to get player identifiers
 local function GetPlayerIdentifiers(source)
     local identifiers = {}
-    local numIds = GetNumPlayerIdentifiers(source)
+    local success, numIds = pcall(GetNumPlayerIdentifiers, source)
+    
+    if not success then
+        exports['pixel_logs']:CatchError('Failed to get player identifiers count', 'GetPlayerIdentifiers', {
+            source = source,
+            error = numIds
+        })
+        return identifiers
+    end
     
     for i = 0, numIds - 1 do
-        local id = GetPlayerIdentifier(source, i)
-        if id then
+        local success, id = pcall(GetPlayerIdentifier, source, i)
+        if success and id then
             local type = id:match('^([^:]+):')
             if type then
                 identifiers[type] = id
@@ -347,6 +362,9 @@ end)
 
 -- Resource Start/Stop Logging
 AddEventHandler('onResourceStart', function(resourceName)
+    -- Skip logging for pixel_logs itself
+    if resourceName == GetCurrentResourceName() then return end
+    
     if Config.LogTypes['player_resources'] then
         local data = {
             resource = resourceName,
@@ -502,7 +520,7 @@ end)
 
 -- txAdmin Event Monitoring
 AddEventHandler('txAdmin:events:serverShuttingDown', function(data)
-    if not Config.Events.Resources then return end
+    if not Config.LogTypes.player_resources then return end
     
     local embed = Utils.CreateEmbed('server_shutdown', 'Server is shutting down', nil, 16711680, {
         author = data.author,
@@ -514,7 +532,7 @@ AddEventHandler('txAdmin:events:serverShuttingDown', function(data)
 end)
 
 AddEventHandler('txAdmin:events:scheduledRestart', function(data)
-    if not Config.Events.Resources then return end
+    if not Config.LogTypes.player_resources then return end
     
     local embed = Utils.CreateEmbed('scheduled_restart', 'Scheduled server restart', nil, 16711680, {
         seconds = data.secondsRemaining,
@@ -525,7 +543,7 @@ AddEventHandler('txAdmin:events:scheduledRestart', function(data)
 end)
 
 AddEventHandler('txAdmin:events:playerBanned', function(data)
-    if not Config.Events.Bans then return end
+    if not Config.LogTypes.player_bans then return end
     
     local embed = Utils.CreateEmbed('player_banned', 'Player banned', data.targetNetId, 16711680, {
         author = data.author,
@@ -540,7 +558,7 @@ AddEventHandler('txAdmin:events:playerBanned', function(data)
 end)
 
 AddEventHandler('txAdmin:events:playerKicked', function(data)
-    if not Config.Events.Kicks then return end
+    if not Config.LogTypes.player_kicks then return end
     
     local embed = Utils.CreateEmbed('player_kicked', 'Player kicked', data.target, 16711680, {
         author = data.author,
@@ -552,7 +570,7 @@ AddEventHandler('txAdmin:events:playerKicked', function(data)
 end)
 
 AddEventHandler('txAdmin:events:playerWarned', function(data)
-    if not Config.Events.Warns then return end
+    if not Config.LogTypes.player_warns then return end
     
     local embed = Utils.CreateEmbed('player_warned', 'Player warned', data.targetNetId, 16711680, {
         author = data.author,
@@ -565,7 +583,7 @@ AddEventHandler('txAdmin:events:playerWarned', function(data)
 end)
 
 AddEventHandler('txAdmin:events:whitelistPlayer', function(data)
-    if not Config.Events.Whitelist then return end
+    if not Config.LogTypes.player_connections then return end
     
     local embed = Utils.CreateEmbed('whitelist_update', 'Whitelist status changed', nil, 16711680, {
         action = data.action,

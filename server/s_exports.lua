@@ -3,8 +3,6 @@
     Version: 1.04122025
 ]]
 
-local Utils = exports['pixel_logs']:GetUtils()
-
 -- Custom Log Export
 exports('SendCustomLog', function(messageType, message, source, color)
     if not Config.LogTypes[messageType] then return end
@@ -29,6 +27,24 @@ end)
 -- Debug Log Export
 exports('AddDebugLog', function(type, message, data)
     Utils.AddDebugLog(type, message, data)
+end)
+
+-- Debug Log Retrieval Exports
+exports('GetDebugLog', function(index)
+    return Utils.GetDebugLog(index)
+end)
+
+exports('GetAllDebugLogs', function()
+    return Utils.GetAllDebugLogs()
+end)
+
+exports('ClearDebugLogs', function()
+    Utils.ClearDebugLogs()
+end)
+
+-- Error Catching Export
+exports('CatchError', function(error, source, data)
+    CatchError(error, source, data)
 end)
 
 -- Custom Log Events
