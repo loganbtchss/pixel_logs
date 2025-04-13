@@ -29,6 +29,38 @@ local function GetConvarSafe(name, default)
     return success and result or default
 end
 
+-- Function to check required convars
+local function CheckRequiredConvars()
+    local requiredConvars = {
+        {name = 'pixel_logs_webhook', description = 'Discord webhook URL'}
+    }
+    
+    local missingConvars = {}
+    
+    for _, convar in ipairs(requiredConvars) do
+        local value = GetConvar(convar.name, '')
+        if value == '' then
+            table.insert(missingConvars, convar.description)
+        end
+    end
+    
+    if #missingConvars > 0 then
+        print('^1[pixel_logs] ERROR: Required convars are missing:^7')
+        for _, convar in ipairs(missingConvars) do
+            print('^1- ' .. convar .. '^7')
+        end
+        print('^1[pixel_logs] Resource will not start until all required convars are set.^7')
+        return false
+    end
+    
+    return true
+end
+
+-- Check required convars before starting
+if not CheckRequiredConvars() then
+    return
+end
+
 local function PrintStartupLog()
     print('^0')
     print('^0┌─────────────────────────────────────────────────────────────┐')

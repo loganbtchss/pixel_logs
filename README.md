@@ -62,27 +62,12 @@ This is an advanced Discord logging system for FiveM and RedM servers, providing
 - Player avatar support
 - Proxy support for Discord webhooks
 
-### 💬 Discord Integration
-- Rich embeds with dynamic fields
-- Customizable webhook settings
-- Clean message formatting
-- Player identifier integration
-- Automatic timestamp handling
-- Proxy support for webhook requests
-
-## 📦 Installation
-
-1. Download the latest release
-2. Place the `pixel_logs` folder in your server's resources directory
-3. Add `ensure pixel_logs` to your server.cfg
-4. Configure the resource using the convars below
-
-## ⚙️ Configuration
-
 ### Required Convars
+> [!IMPORTANT]
+> These convars are **mandatory** for the resource to start. If any of these are not set, the resource will not initialize.
 
 ```cfg
-set pixel_logs_webhook "YOUR_DISCORD_WEBHOOK_URL"
+set pixel_logs_webhook "YOUR_DISCORD_WEBHOOK_URL" # Required: Discord webhook URL for logging
 ```
 
 ### Optional Convars
