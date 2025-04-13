@@ -63,19 +63,19 @@ end
 
 local function PrintStartupLog()
     print('^0')
-    print('^0┌─────────────────────────────────────────────────────────────┐')
-    print('^0│ ^3██████╗ ██╗██╗  ██╗███████╗██╗      ██████╗  ██████╗ ███████╗^0 │')
-    print('^0│ ^3██╔══██╗██║╚██╗██╔╝██╔════╝██║     ██╔═══██╗██╔════╝ ██╔════╝^0 │')
-    print('^0│ ^3██████╔╝██║ ╚███╔╝ █████╗  ██║     ██║   ██║██║  ███╗███████╗^0 │')
-    print('^0│ ^3██╔═══╝ ██║ ██╔██╗ ██╔══╝  ██║     ██║   ██║██║   ██║╚════██║^0 │')
-    print('^0│ ^3██║     ██║██╔╝ ██╗███████╗███████╗╚██████╔╝╚██████╔╝███████║^0 │')
-    print('^0│ ^3╚═╝     ╚═╝╚═╝  ╚═╝╚══════╝╚══════╝ ╚═════╝  ╚═════╝ ╚══════╝^0 │')
-    print('^0├─────────────────────────────────────────────────────────────┤')
+    print('^0┌─────────────────────────────────────────────────────────────────────┐')
+    print('^0│ ^3██████╗ ██╗██╗  ██╗███████╗██╗      ██████╗  ██████╗ ███████╗^0   │')
+    print('^0│ ^3██╔══██╗██║╚██╗██╔╝██╔════╝██║     ██╔═══██╗██╔════╝ ██╔════╝^0   │')
+    print('^0│ ^3██████╔╝██║ ╚███╔╝ █████╗  ██║     ██║   ██║██║  ███╗███████╗^0   │')
+    print('^0│ ^3██╔═══╝ ██║ ██╔██╗ ██╔══╝  ██║     ██║   ██║██║   ██║╚════██║^0   │')
+    print('^0│ ^3██║     ██║██╔╝ ██╗███████╗███████╗╚██████╔╝╚██████╔╝███████║^0   │')
+    print('^0│ ^3╚═╝     ╚═╝╚═╝  ╚═╝╚══════╝╚══════╝ ╚═════╝  ╚═════╝ ╚══════╝^0   │')
+    print('^0├─────────────────────────────────────────────────────────────────────┤')
     print('^0│ ^7Version: ^2' .. GetResourceMetadataSafe(GetCurrentResourceName(), 'version', 0) .. '^0 │')
-    print('^0│ ^7Status: ' .. versionStatus .. '^0 │')
-    print('^0│ ^7Author: ^2Pixelated ^7(^5codemeapixel.dev^7)^0 │')
-    print('^0│ ^7Repository: ^5https://github.com/ByteBrushStudios/pixel_logs^0 │')
-    print('^0├─────────────────────────────────────────────────────────────┤')
+    print('^0│ ^7Status: ' .. versionStatus .. '^0                                 │')
+    print('^0│ ^7Author: ^2Pixelated ^7(^5codemeapixel.dev^7)^0                    │')
+    print('^0│ ^7Repository: ^5https://github.com/ByteBrushStudios/pixel_logs^0    │')
+    print('^0├─────────────────────────────────────────────────────────────────────┤')
     
     -- Check webhook configuration
     if Config.DiscordWebhook == '' then
@@ -196,6 +196,14 @@ end
 -- Start version check and wait for completion
 CreateThread(function()
     local success, err = pcall(function()
+        -- Skip version check if debug_noversion is enabled
+        if Config.Debug.NoVersion then
+            versionStatus = '^8Skipped (Debug Mode)^0'
+            versionCheckComplete = true
+            PrintStartupLog()
+            return
+        end
+        
         CheckVersion()
         while not versionCheckComplete do
             Wait(100)

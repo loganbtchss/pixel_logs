@@ -9,11 +9,7 @@ end)
 
 RegisterNetEvent('pixel_logs:customEmbed')
 AddEventHandler('pixel_logs:customEmbed', function(embed)
-    PerformHttpRequest(Config.DiscordWebhook, function(err, text, headers) end, 'POST', json.encode({
-        username = Config.DiscordUsername,
-        avatar_url = Config.DiscordAvatar,
-        embeds = {embed}
-    }), { ['Content-Type'] = 'application/json' })
+    Utils.SendEmbedToDiscord(embed)
 end)
 
 -- Exports
@@ -22,9 +18,5 @@ exports('SendCustomLog', function(type, message, source, color)
 end)
 
 exports('SendCustomEmbed', function(embed)
-    PerformHttpRequest(Config.DiscordWebhook, function(err, text, headers) end, 'POST', json.encode({
-        username = Config.DiscordUsername,
-        avatar_url = Config.DiscordAvatar,
-        embeds = {embed}
-    }), { ['Content-Type'] = 'application/json' })
+    Utils.SendEmbedToDiscord(embed)
 end) 

@@ -35,9 +35,17 @@ This is an advanced Discord logging system for FiveM and RedM servers, providing
 ### 📝 Event Logging
 - Player joins/leaves with detailed information
 - Chat messages with channel tracking
-- Player deaths with location and weapon details
+- Player deaths with:
+  - Death cause (Player Kill, Vehicle Accident, Animal Attack, Fire, Explosion, Drowning, Fall Damage, Suicide, Environmental)
+  - Weapon/Death method details
+  - Location and coordinates
+  - Killer information (if applicable)
 - Command usage with arguments
-- Administrative actions (bans/kicks/warns)
+- Administrative actions (bans/kicks/warns) with:
+  - Duration support for bans
+  - Reason tracking
+  - Admin information
+  - Player identifiers
 - Resource start/stop events
 - Custom event support
 
@@ -221,13 +229,28 @@ set pixel_logs_proxy_password "proxypass"
 
 ```lua
 Config.Messages = {
-    ['player_join'] = {
-        title = 'Player Joined',
-        description = '**{player}** has joined the server',
+    ['player_death'] = {
+        title = 'Player Death',
+        description = '**{player}** has died',
         fields = {
             {
                 name = 'Player Information',
                 value = '```\nName: {player}\nID: {id}\n```',
+                inline = false
+            },
+            {
+                name = 'Death Cause',
+                value = '{cause}',
+                inline = true
+            },
+            {
+                name = 'Location',
+                value = '{location}',
+                inline = true
+            },
+            {
+                name = 'Coordinates',
+                value = '{coords}',
                 inline = false
             }
         }
@@ -251,6 +274,10 @@ Config.Messages = {
 | `{location}` | Location coordinates | 123.45, 67.89, 10.0 |
 | `{killer}` | Killer name | Player2 |
 | `{weapon}` | Weapon name | WEAPON_PISTOL |
+| `{cause}` | Death cause | Player Kill |
+| `{coords}` | Exact coordinates | X: 123.45, Y: 67.89, Z: 10.0 |
+| `{duration}` | Ban duration | 7 days |
+| `{channel}` | Chat channel | global |
 
 ## ❓ Support
 

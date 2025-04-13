@@ -1,13 +1,27 @@
 --[[
-    Note:
-    - This is not a complete list
-    - More will be added with new releases
+    Weapon Name Lookup System
+    Version: 1.04122025
+    Supports: FiveM and RedM
 ]]
-WeaponNames = {
+
+local WeaponNames = {
+    -- Common Weapons (Both FiveM and RedM)
     [tostring(GetHashKey('WEAPON_UNARMED'))] = 'Unarmed',
     [tostring(GetHashKey('WEAPON_KNIFE'))] = 'Knife',
+    [tostring(GetHashKey('WEAPON_MELEE_KNIFE'))] = 'Knife',
+    [tostring(GetHashKey('WEAPON_MELEE_KNIFE_JAWBONE'))] = 'Jawbone Knife',
+    [tostring(GetHashKey('WEAPON_MELEE_LANTERN'))] = 'Lantern',
+    [tostring(GetHashKey('WEAPON_MELEE_DAVY_LANTERN'))] = 'Davy Lantern',
+    [tostring(GetHashKey('WEAPON_MELEE_TORCH'))] = 'Torch',
+    [tostring(GetHashKey('WEAPON_MELEE_MACHETE'))] = 'Machete',
+    [tostring(GetHashKey('WEAPON_MELEE_HATCHET'))] = 'Hatchet',
+    [tostring(GetHashKey('WEAPON_MELEE_ANCIENT_HATCHET'))] = 'Ancient Hatchet',
+    [tostring(GetHashKey('WEAPON_MELEE_CLEAVER'))] = 'Cleaver',
+    [tostring(GetHashKey('WEAPON_MELEE_HAMMER'))] = 'Hammer',
+    [tostring(GetHashKey('WEAPON_MELEE_BROKEN_SWORD'))] = 'Broken Sword',
+    
+    -- FiveM Specific Weapons
     [tostring(GetHashKey('WEAPON_NIGHTSTICK'))] = 'Nightstick',
-    [tostring(GetHashKey('WEAPON_HAMMER'))] = 'Hammer',
     [tostring(GetHashKey('WEAPON_BAT'))] = 'Baseball Bat',
     [tostring(GetHashKey('WEAPON_GOLFCLUB'))] = 'Golf Club',
     [tostring(GetHashKey('WEAPON_CROWBAR'))] = 'Crowbar',
@@ -27,16 +41,12 @@ WeaponNames = {
     [tostring(GetHashKey('WEAPON_SAWNOFFSHOTGUN'))] = 'Sawed-Off Shotgun',
     [tostring(GetHashKey('WEAPON_ASSAULTSHOTGUN'))] = 'Assault Shotgun',
     [tostring(GetHashKey('WEAPON_BULLPUPSHOTGUN'))] = 'Bullpup Shotgun',
-    [tostring(GetHashKey('WEAPON_STUNGUN'))] = 'Stun Gun',
     [tostring(GetHashKey('WEAPON_SNIPERRIFLE'))] = 'Sniper Rifle',
     [tostring(GetHashKey('WEAPON_HEAVYSNIPER'))] = 'Heavy Sniper',
     [tostring(GetHashKey('WEAPON_REMOTESNIPER'))] = 'Remote Sniper',
     [tostring(GetHashKey('WEAPON_GRENADELAUNCHER'))] = 'Grenade Launcher',
     [tostring(GetHashKey('WEAPON_GRENADELAUNCHER_SMOKE'))] = 'Smoke Grenade Launcher',
     [tostring(GetHashKey('WEAPON_RPG'))] = 'RPG',
-    [tostring(GetHashKey('WEAPON_PASSENGER_ROCKET'))] = 'Passenger Rocket',
-    [tostring(GetHashKey('WEAPON_AIRSTRIKE_ROCKET'))] = 'Airstrike Rocket',
-    [tostring(GetHashKey('WEAPON_STINGER'))] = 'Stinger [Vehicle]',
     [tostring(GetHashKey('WEAPON_MINIGUN'))] = 'Minigun',
     [tostring(GetHashKey('WEAPON_GRENADE'))] = 'Grenade',
     [tostring(GetHashKey('WEAPON_STICKYBOMB'))] = 'Sticky Bomb',
@@ -45,68 +55,65 @@ WeaponNames = {
     [tostring(GetHashKey('WEAPON_MOLOTOV'))] = 'Molotov',
     [tostring(GetHashKey('WEAPON_FIREEXTINGUISHER'))] = 'Fire Extinguisher',
     [tostring(GetHashKey('WEAPON_PETROLCAN'))] = 'Jerry Can',
-    [tostring(GetHashKey('OBJECT'))] = 'Object',
     [tostring(GetHashKey('WEAPON_BALL'))] = 'Ball',
     [tostring(GetHashKey('WEAPON_FLARE'))] = 'Flare',
-    [tostring(GetHashKey('VEHICLE_WEAPON_TANK'))] = 'Tank Cannon',
-    [tostring(GetHashKey('VEHICLE_WEAPON_SPACE_ROCKET'))] = 'Rockets',
-    [tostring(GetHashKey('VEHICLE_WEAPON_PLAYER_LASER'))] = 'Laser',
-    [tostring(GetHashKey('AMMO_RPG'))] = 'Rocket',
-    [tostring(GetHashKey('AMMO_TANK'))] = 'Tank',
-    [tostring(GetHashKey('AMMO_SPACE_ROCKET'))] = 'Rocket',
-    [tostring(GetHashKey('AMMO_PLAYER_LASER'))] = 'Laser',
-    [tostring(GetHashKey('AMMO_ENEMY_LASER'))] = 'Laser',
-    [tostring(GetHashKey('WEAPON_RAMMED_BY_CAR'))] = 'Rammed by Car',
-    [tostring(GetHashKey('WEAPON_BOTTLE'))] = 'Bottle',
-    [tostring(GetHashKey('WEAPON_GUSENBERG'))] = 'Gusenberg Sweeper',
-    [tostring(GetHashKey('WEAPON_SNSPISTOL'))] = 'SNS Pistol',
-    [tostring(GetHashKey('WEAPON_VINTAGEPISTOL'))] = 'Vintage Pistol',
-    [tostring(GetHashKey('WEAPON_DAGGER'))] = 'Antique Cavalry Dagger',
-    [tostring(GetHashKey('WEAPON_FLAREGUN'))] = 'Flare Gun',
-    [tostring(GetHashKey('WEAPON_HEAVYPISTOL'))] = 'Heavy Pistol',
-    [tostring(GetHashKey('WEAPON_SPECIALCARBINE'))] = 'Special Carbine',
-    [tostring(GetHashKey('WEAPON_MUSKET'))] = 'Musket',
-    [tostring(GetHashKey('WEAPON_FIREWORK'))] = 'Firework Launcher',
-    [tostring(GetHashKey('WEAPON_MARKSMANRIFLE'))] = 'Marksman Rifle',
-    [tostring(GetHashKey('WEAPON_HEAVYSHOTGUN'))] = 'Heavy Shotgun',
-    [tostring(GetHashKey('WEAPON_PROXMINE'))] = 'Proximity Mine',
-    [tostring(GetHashKey('WEAPON_HOMINGLAUNCHER'))] = 'Homing Launcher',
-    [tostring(GetHashKey('WEAPON_HATCHET'))] = 'Hatchet',
-    [tostring(GetHashKey('WEAPON_COMBATPDW'))] = 'Combat PDW',
-    [tostring(GetHashKey('WEAPON_KNUCKLE'))] = 'Knuckle Duster',
-    [tostring(GetHashKey('WEAPON_MARKSMANPISTOL'))] = 'Marksman Pistol',
-    [tostring(GetHashKey('WEAPON_MACHETE'))] = 'Machete',
-    [tostring(GetHashKey('WEAPON_MACHINEPISTOL'))] = 'Machine Pistol',
-    [tostring(GetHashKey('WEAPON_FLASHLIGHT'))] = 'Flashlight',
-    [tostring(GetHashKey('WEAPON_DBSHOTGUN'))] = 'Double Barrel Shotgun',
-    [tostring(GetHashKey('WEAPON_COMPACTRIFLE'))] = 'Compact Rifle',
-    [tostring(GetHashKey('WEAPON_SWITCHBLADE'))] = 'Switchblade',
-    [tostring(GetHashKey('WEAPON_REVOLVER'))] = 'Heavy Revolver',
-    [tostring(GetHashKey('WEAPON_FIRE'))] = 'Fire',
-    [tostring(GetHashKey('WEAPON_HELI_CRASH'))] = 'Heli Crash',
-    [tostring(GetHashKey('WEAPON_RUN_OVER_BY_CAR'))] = 'Run over by Car',
-    [tostring(GetHashKey('WEAPON_HIT_BY_WATER_CANNON'))] = 'Hit by Water Cannon',
-    [tostring(GetHashKey('WEAPON_EXHAUSTION'))] = 'Exhaustion',
-    [tostring(GetHashKey('WEAPON_EXPLOSION'))] = 'Explosion',
-    [tostring(GetHashKey('WEAPON_ELECTRIC_FENCE'))] = 'Electric Fence',
-    [tostring(GetHashKey('WEAPON_BLEEDING'))] = 'Bleeding',
-    [tostring(GetHashKey('WEAPON_DROWNING_IN_VEHICLE'))] = 'Drowning in Vehicle',
-    [tostring(GetHashKey('WEAPON_DROWNING'))] = 'Drowning',
-    [tostring(GetHashKey('WEAPON_BARBED_WIRE'))] = 'Barbed Wire',
-    [tostring(GetHashKey('WEAPON_VEHICLE_ROCKET'))] = 'Vehicle Rocket',
-    [tostring(GetHashKey('WEAPON_BULLPUPRIFLE'))] = 'Bullpup Rifle',
-    [tostring(GetHashKey('WEAPON_ASSAULTSNIPER'))] = 'Assault Sniper',
-    [tostring(GetHashKey('VEHICLE_WEAPON_ROTORS'))] = 'Rotors',
-    [tostring(GetHashKey('WEAPON_RAILGUN'))] = 'Railgun',
-    [tostring(GetHashKey('WEAPON_AIR_DEFENCE_GUN'))] = 'Air Defence Gun',
-    [tostring(GetHashKey('WEAPON_AUTOSHOTGUN'))] = 'Automatic Shotgun',
-    [tostring(GetHashKey('WEAPON_BATTLEAXE'))] = 'Battle Axe',
-    [tostring(GetHashKey('WEAPON_COMPACTLAUNCHER'))] = 'Compact Grenade Launcher',
-    [tostring(GetHashKey('WEAPON_MINISMG'))] = 'Mini SMG',
-    [tostring(GetHashKey('WEAPON_PIPEBOMB'))] = 'Pipebomb',
-    [tostring(GetHashKey('WEAPON_POOLCUE'))] = 'Poolcue',
-    [tostring(GetHashKey('WEAPON_WRENCH'))] = 'Wrench',
-    [tostring(GetHashKey('WEAPON_SNOWBALL'))] = 'Snowball',
-    [tostring(GetHashKey('WEAPON_ANIMAL'))] = 'Animal',
-    [tostring(GetHashKey('WEAPON_COUGAR'))] = 'Cougar'
-   }
+    [tostring(GetHashKey('WEAPON_STUNGUN'))] = 'Stun Gun',
+    
+    -- RedM Specific Weapons
+    [tostring(GetHashKey('WEAPON_REVOLVER_CATTLEMAN'))] = 'Cattleman Revolver',
+    [tostring(GetHashKey('WEAPON_REVOLVER_CATTLEMAN_MEXICAN'))] = 'Mexican Cattleman',
+    [tostring(GetHashKey('WEAPON_REVOLVER_DOUBLEACTION'))] = 'Double Action Revolver',
+    [tostring(GetHashKey('WEAPON_REVOLVER_SCHOFIELD'))] = 'Schofield Revolver',
+    [tostring(GetHashKey('WEAPON_REVOLVER_LEMAT'))] = 'LeMat Revolver',
+    [tostring(GetHashKey('WEAPON_PISTOL_MAUSER'))] = 'Mauser Pistol',
+    [tostring(GetHashKey('WEAPON_PISTOL_SEMIAUTO'))] = 'Semi-Auto Pistol',
+    [tostring(GetHashKey('WEAPON_PISTOL_VOLCANIC'))] = 'Volcanic Pistol',
+    [tostring(GetHashKey('WEAPON_RIFLE_VARMINT'))] = 'Varmint Rifle',
+    [tostring(GetHashKey('WEAPON_RIFLE_SPRINGFIELD'))] = 'Springfield Rifle',
+    [tostring(GetHashKey('WEAPON_RIFLE_BOLTACTION'))] = 'Bolt Action Rifle',
+    [tostring(GetHashKey('WEAPON_RIFLE_ELEPHANT'))] = 'Elephant Rifle',
+    [tostring(GetHashKey('WEAPON_SHOTGUN_DOUBLEBARREL'))] = 'Double Barrel Shotgun',
+    [tostring(GetHashKey('WEAPON_SHOTGUN_SAWEDOFF'))] = 'Sawed-Off Shotgun',
+    [tostring(GetHashKey('WEAPON_SHOTGUN_REPEATING'))] = 'Repeating Shotgun',
+    [tostring(GetHashKey('WEAPON_SHOTGUN_PUMP'))] = 'Pump Shotgun',
+    [tostring(GetHashKey('WEAPON_SHOTGUN_SEMIAUTO'))] = 'Semi-Auto Shotgun',
+    [tostring(GetHashKey('WEAPON_SNIPERRIFLE_ROLLINGBLOCK'))] = 'Rolling Block Rifle',
+    [tostring(GetHashKey('WEAPON_SNIPERRIFLE_CARCANO'))] = 'Carcano Rifle',
+    [tostring(GetHashKey('WEAPON_BOW'))] = 'Bow',
+    [tostring(GetHashKey('WEAPON_BOW_IMPROVED'))] = 'Improved Bow',
+    [tostring(GetHashKey('WEAPON_LASSO'))] = 'Lasso',
+    [tostring(GetHashKey('WEAPON_LASSO_REINFORCED'))] = 'Reinforced Lasso',
+    [tostring(GetHashKey('WEAPON_MELEE_LANTERN_ELECTRIC'))] = 'Electric Lantern',
+    [tostring(GetHashKey('WEAPON_THROWN_DYNAMITE'))] = 'Dynamite',
+    [tostring(GetHashKey('WEAPON_THROWN_MOLOTOV'))] = 'Molotov',
+    [tostring(GetHashKey('WEAPON_THROWN_THROWING_KNIVES'))] = 'Throwing Knives',
+    [tostring(GetHashKey('WEAPON_THROWN_TOMAHAWK'))] = 'Tomahawk',
+    [tostring(GetHashKey('WEAPON_THROWN_POISONBOTTLE'))] = 'Poison Bottle'
+}
+
+-- Helper function to safely get weapon name
+function GetWeaponName(weaponHash)
+    if not weaponHash then return 'Unknown' end
+    
+    local hashString = tostring(weaponHash)
+    local weaponName = WeaponNames[hashString]
+    
+    if not weaponName then
+        -- Try to get the weapon name from the game
+        local success, name = pcall(function()
+            return GetWeaponNameFromHash(weaponHash)
+        end)
+        
+        if success and name and name ~= 'WEAPON_UNARMED' then
+            -- Format the weapon name
+            name = name:gsub('WEAPON_', ''):gsub('_', ' '):lower()
+            name = name:gsub('(%l)(%w*)', function(a,b) return a:upper()..b end)
+            return name
+        end
+    end
+    
+    return weaponName or 'Unknown'
+end
+
+-- Export the function
+exports('GetWeaponName', GetWeaponName)

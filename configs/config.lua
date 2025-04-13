@@ -21,7 +21,8 @@ Config.Proxy = {
 Config.Debug = {
     Enabled = GetConvar('pixel_logs_debug', 'false') == 'true',
     MaxLogs = tonumber(GetConvar('pixel_logs_debug_maxlogs', '100')),
-    Webhook = GetConvar('pixel_logs_debug_webhook', '')
+    Webhook = GetConvar('pixel_logs_debug_webhook', ''),
+    NoVersion = GetConvar('pixel_logs_debug_noversion', 'false') == 'true'
 }
 
 -- Logging Settings
