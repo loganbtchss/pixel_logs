@@ -47,7 +47,7 @@ end
 -- Helper function to safely iterate over tables
 local function SafeTableIterate(t, func)
     if type(t) ~= 'table' then
-        exports['pixel_logs']:CatchError('Invalid table provided for iteration', 'SafeTableIterate')
+        print('^1[Pixel Logs] Warning: Attempted to iterate over non-table value: ' .. type(t) .. '^0')
         return
     end
     
@@ -58,7 +58,7 @@ local function SafeTableIterate(t, func)
     end)
     
     if not success then
-        exports['pixel_logs']:CatchError(err, 'SafeTableIterate')
+        print('^1[Pixel Logs] Error during table iteration: ' .. tostring(err) .. '^0')
     end
 end
 

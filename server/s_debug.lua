@@ -20,7 +20,14 @@ end
 
 -- Helper function to safely get stack trace
 local function GetStackTrace()
-    local stack = debug.traceback()
+    local success, stack = pcall(function()
+        return debug.traceback()
+    end)
+    
+    if not success or type(stack) ~= 'string' then
+        return 'Failed to get stack trace'
+    end
+    
     -- Remove the first line (it's just the error message)
     local lines = {}
     for line in stack:gmatch("[^\r\n]+") do
