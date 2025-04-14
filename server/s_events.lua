@@ -5,6 +5,22 @@
 
 local Utils = exports['pixel_logs']:GetUtils()
 
+-- Ensure Config.LogTypes entries for txAdmin events are present and enabled
+if not Config.LogTypes then Config.LogTypes = {} end
+
+Config.LogTypes.txadmin_restart_skipped = Config.LogTypes.txadmin_restart_skipped or true
+Config.LogTypes.txadmin_direct_message = Config.LogTypes.txadmin_direct_message or true
+Config.LogTypes.txadmin_player_healed = Config.LogTypes.txadmin_player_healed or true
+Config.LogTypes.txadmin_whitelist_preapproval = Config.LogTypes.txadmin_whitelist_preapproval or true
+Config.LogTypes.txadmin_whitelist_request = Config.LogTypes.txadmin_whitelist_request or true
+Config.LogTypes.txadmin_action_revoked = Config.LogTypes.txadmin_action_revoked or true
+Config.LogTypes.txadmin_admin_auth = Config.LogTypes.txadmin_admin_auth or true
+Config.LogTypes.txadmin_admins_updated = Config.LogTypes.txadmin_admins_updated or true
+Config.LogTypes.txadmin_config_changed = Config.LogTypes.txadmin_config_changed or true
+Config.LogTypes.txadmin_console_command = Config.LogTypes.txadmin_console_command or true
+Config.LogTypes.txadmin_announcement = Config.LogTypes.txadmin_announcement or true
+Config.LogTypes.txadmin_shutdown = Config.LogTypes.txadmin_shutdown or true
+
 -- Helper function to safely get player name
 local function GetPlayerNameSafe(source)
     local success, name = pcall(GetPlayerName, source)
@@ -77,16 +93,6 @@ AddEventHandler('playerConnecting', function(name, setKickReason, deferrals)
         
         -- Use the CreateEmbed function for better formatting
         local embed = Utils.CreateEmbed('player_join', message, source, nil, data)
-        
-        -- Add additional fields if needed
-        if embed and embed.fields then
-            -- Add connection time field
-            table.insert(embed.fields, {
-                name = 'Connection Time',
-                value = data.time,
-                inline = true
-            })
-        end
         
         Utils.SendEmbedToDiscord(embed)
     end
@@ -541,203 +547,189 @@ AddEventHandler('pixel_logs:adminAction', function(data)
 end)
 
 -- txAdmin Event Monitoring
-AddEventHandler('txAdmin:events:serverShuttingDown', function(data)
-    if not Config.LogTypes.player_resources then return end
-    
-    local embed = Utils.CreateEmbed('server_shutdown', 'Server is shutting down', nil, 16711680, {
-        author = data.author,
-        message = data.message,
-        delay = string.format('%d seconds', data.delay / 1000)
+AddEventHandler('txAdmin:events:announcement', function(eventData)
+    if not Config.LogTypes.txadmin_announcement then return end
+    local embed = Utils.CreateEmbed('txadmin_announcement', Config.Messages['txadmin_announcement'].description, nil, Config.Colors['txadmin_announcement'], {
+        author = eventData.author or 'txAdmin',
+        message = eventData.message or 'No message provided',
+        timestamp = os.date('%Y-%m-%d %H:%M:%S')
     })
-    
     Utils.SendEmbedToDiscord(embed)
 end)
 
-AddEventHandler('txAdmin:events:scheduledRestart', function(data)
-    if not Config.LogTypes.player_resources then return end
-    
-    local embed = Utils.CreateEmbed('scheduled_restart', 'Scheduled server restart', nil, 16711680, {
-        seconds = data.secondsRemaining,
-        message = data.translatedMessage
+AddEventHandler('txAdmin:events:serverShuttingDown', function(eventData)
+    if not Config.LogTypes.txadmin_shutdown then return end
+    local embed = Utils.CreateEmbed('txadmin_shutdown', Config.Messages['txadmin_shutdown'].description, nil, Config.Colors['txadmin_shutdown'], {
+        delay = string.format('%d seconds', (eventData.delay or 0) / 1000),
+        author = eventData.author or 'txAdmin',
+        message = eventData.message or 'No message provided',
+        timestamp = os.date('%Y-%m-%d %H:%M:%S')
     })
-    
     Utils.SendEmbedToDiscord(embed)
 end)
 
-AddEventHandler('txAdmin:events:playerBanned', function(data)
+AddEventHandler('txAdmin:events:scheduledRestart', function(eventData)
+    if not Config.LogTypes.txadmin_restart_skipped then return end
+    local embed = Utils.CreateEmbed('scheduled_restart', Config.Messages['scheduled_restart'].description, nil, Config.Colors['scheduled_restart'], {
+        seconds = eventData.secondsRemaining or 0,
+        message = eventData.translatedMessage or 'No message provided',
+        timestamp = os.date('%Y-%m-%d %H:%M:%S')
+    })
+    Utils.SendEmbedToDiscord(embed)
+end)
+
+AddEventHandler('txAdmin:events:scheduledRestartSkipped', function(eventData)
+    if not Config.LogTypes.txadmin_restart_skipped then return end
+    local embed = Utils.CreateEmbed('txadmin_restart_skipped', Config.Messages['txadmin_restart_skipped'].description, nil, Config.Colors['txadmin_restart_skipped'], {
+        secondsRemaining = eventData.secondsRemaining or 0,
+        temporary = tostring(eventData.temporary or false),
+        author = eventData.author or 'Unknown',
+        timestamp = os.date('%Y-%m-%d %H:%M:%S')
+    })
+    Utils.SendEmbedToDiscord(embed)
+end)
+
+AddEventHandler('txAdmin:events:playerDirectMessage', function(eventData)
+    if not Config.LogTypes.txadmin_direct_message then return end
+    local embed = Utils.CreateEmbed('txadmin_direct_message', Config.Messages['txadmin_direct_message'].description, nil, Config.Colors['txadmin_direct_message'], {
+        author = eventData.author or 'Unknown',
+        target = eventData.target or 'Unknown',
+        message = eventData.message or 'No message provided',
+        timestamp = os.date('%Y-%m-%d %H:%M:%S')
+    })
+    Utils.SendEmbedToDiscord(embed)
+end)
+
+AddEventHandler('txAdmin:events:playerHealed', function(eventData)
+    if not Config.LogTypes.txadmin_player_healed then return end
+    local embed = Utils.CreateEmbed('txadmin_player_healed', Config.Messages['txadmin_player_healed'].description, nil, Config.Colors['txadmin_player_healed'], {
+        author = eventData.author or 'Unknown',
+        target = eventData.target or 'Entire Server',
+        timestamp = os.date('%Y-%m-%d %H:%M:%S')
+    })
+    Utils.SendEmbedToDiscord(embed)
+end)
+
+AddEventHandler('txAdmin:events:playerWarned', function(eventData)
+    if not Config.LogTypes.txadmin_player_warned then return end
+    local embed = Utils.CreateEmbed('txadmin_player_warned', Config.Messages['txadmin_player_warned'].description, nil, Config.Colors['txadmin_player_warned'], {
+        author = eventData.author or 'Unknown',
+        reason = eventData.reason or 'No reason provided',
+        target = eventData.targetName or 'Unknown',
+        identifiers = table.concat(eventData.targetIds or {}, '\n'),
+        timestamp = os.date('%Y-%m-%d %H:%M:%S')
+    })
+    Utils.SendEmbedToDiscord(embed)
+end)
+
+AddEventHandler('txAdmin:events:whitelistPlayer', function(eventData)
+    if not Config.LogTypes.txadmin_whitelist_player then return end
+    local embed = Utils.CreateEmbed('whitelist_update', Config.Messages['whitelist_update'].description, nil, Config.Colors['whitelist_update'], {
+        action = eventData.action or 'Unknown',
+        player = eventData.playerName or 'Unknown',
+        admin = eventData.adminName or 'Unknown',
+        license = eventData.license or 'Unknown',
+        timestamp = os.date('%Y-%m-%d %H:%M:%S')
+    })
+    Utils.SendEmbedToDiscord(embed)
+end)
+
+AddEventHandler('txAdmin:events:playerBanned', function(eventData)
     if not Config.LogTypes.player_bans then return end
     
-    local embed = Utils.CreateEmbed('player_banned', 'Player banned', data.targetNetId, 16711680, {
-        author = data.author,
-        reason = data.reason,
-        duration = data.durationTranslated or 'Permanent',
-        target = data.targetName,
-        identifiers = table.concat(data.targetIds, '\n'),
-        hwids = table.concat(data.targetHwids, '\n')
+    local embed = Utils.CreateEmbed('player_banned', 'Player banned', eventData.targetNetId, 16711680, {
+        author = eventData.author,
+        reason = eventData.reason,
+        duration = eventData.durationTranslated or 'Permanent',
+        target = eventData.targetName,
+        identifiers = table.concat(eventData.targetIds, '\n'),
+        hwids = table.concat(eventData.targetHwids, '\n')
     })
     
     Utils.SendEmbedToDiscord(embed)
 end)
 
-AddEventHandler('txAdmin:events:playerKicked', function(data)
+AddEventHandler('txAdmin:events:playerKicked', function(eventData)
     if not Config.LogTypes.player_kicks then return end
     
-    local embed = Utils.CreateEmbed('player_kicked', 'Player kicked', data.target, 16711680, {
-        author = data.author,
-        reason = data.reason,
-        message = data.dropMessage
+    local embed = Utils.CreateEmbed('player_kicked', 'Player kicked', eventData.target, 16711680, {
+        author = eventData.author,
+        reason = eventData.reason,
+        message = eventData.dropMessage
     })
     
     Utils.SendEmbedToDiscord(embed)
 end)
 
-AddEventHandler('txAdmin:events:playerWarned', function(data)
-    if not Config.LogTypes.player_warns then return end
-    
-    local embed = Utils.CreateEmbed('player_warned', 'Player warned', data.targetNetId, 16711680, {
-        author = data.author,
-        reason = data.reason,
-        target = data.targetName,
-        identifiers = table.concat(data.targetIds, '\n')
-    })
-    
-    Utils.SendEmbedToDiscord(embed)
-end)
-
-AddEventHandler('txAdmin:events:whitelistPlayer', function(data)
-    if not Config.LogTypes.player_connections then return end
-    
-    local embed = Utils.CreateEmbed('whitelist_update', 'Whitelist status changed', nil, 16711680, {
-        action = data.action,
-        player = data.playerName,
-        admin = data.adminName,
-        license = data.license
-    })
-    
-    Utils.SendEmbedToDiscord(embed)
-end)
-
--- txAdmin Event Handlers
-RegisterNetEvent('txAdmin:events:announcement', function(data)
-    if not Config.LogTypes.txadmin_announcement then return end
-    local embed = Utils.CreateEmbed('txadmin_announcement', {
-        data.announcer or 'Unknown',
-        data.message or 'No message provided',
-        os.date('%Y-%m-%d %H:%M:%S')
-    })
-    Utils.SendEmbedToDiscord(embed)
-end)
-
-RegisterNetEvent('txAdmin:events:shutdown', function(data)
-    if not Config.LogTypes.txadmin_shutdown then return end
-    local embed = Utils.CreateEmbed('txadmin_shutdown', {
-        data.reason or 'No reason provided',
-        data.initiatedBy or 'Unknown',
-        os.date('%Y-%m-%d %H:%M:%S')
-    })
-    Utils.SendEmbedToDiscord(embed)
-end)
-
-RegisterNetEvent('txAdmin:events:restartSkipped', function(data)
-    if not Config.LogTypes.txadmin_restart_skipped then return end
-    local embed = Utils.CreateEmbed('txadmin_restart_skipped', {
-        data.skippedBy or 'Unknown',
-        data.reason or 'No reason provided',
-        os.date('%Y-%m-%d %H:%M:%S')
-    })
-    Utils.SendEmbedToDiscord(embed)
-end)
-
-RegisterNetEvent('txAdmin:events:directMessage', function(data)
-    if not Config.LogTypes.txadmin_direct_message then return end
-    local embed = Utils.CreateEmbed('txadmin_direct_message', {
-        data.admin or 'Unknown',
-        data.player or 'Unknown',
-        data.message or 'No message provided',
-        os.date('%Y-%m-%d %H:%M:%S')
-    })
-    Utils.SendEmbedToDiscord(embed)
-end)
-
-RegisterNetEvent('txAdmin:events:playerHealed', function(data)
-    if not Config.LogTypes.txadmin_player_healed then return end
-    local embed = Utils.CreateEmbed('txadmin_player_healed', {
-        data.admin or 'Unknown',
-        data.player or 'Unknown',
-        os.date('%Y-%m-%d %H:%M:%S')
-    })
-    Utils.SendEmbedToDiscord(embed)
-end)
-
-RegisterNetEvent('txAdmin:events:whitelistPreApproval', function(data)
+AddEventHandler('txAdmin:events:whitelistPreApproval', function(eventData)
     if not Config.LogTypes.txadmin_whitelist_preapproval then return end
     local embed = Utils.CreateEmbed('txadmin_whitelist_preapproval', {
-        data.admin or 'Unknown',
-        data.license or 'Unknown',
-        data.discord or 'Unknown',
+        eventData.admin or 'Unknown',
+        eventData.license or 'Unknown',
+        eventData.discord or 'Unknown',
         os.date('%Y-%m-%d %H:%M:%S')
     })
     Utils.SendEmbedToDiscord(embed)
 end)
 
-RegisterNetEvent('txAdmin:events:whitelistRequest', function(data)
+AddEventHandler('txAdmin:events:whitelistRequest', function(eventData)
     if not Config.LogTypes.txadmin_whitelist_request then return end
     local embed = Utils.CreateEmbed('txadmin_whitelist_request', {
-        data.license or 'Unknown',
-        data.discord or 'Unknown',
+        eventData.license or 'Unknown',
+        eventData.discord or 'Unknown',
         os.date('%Y-%m-%d %H:%M:%S')
     })
     Utils.SendEmbedToDiscord(embed)
 end)
 
-RegisterNetEvent('txAdmin:events:actionRevoked', function(data)
+AddEventHandler('txAdmin:events:actionRevoked', function(eventData)
     if not Config.LogTypes.txadmin_action_revoked then return end
     local embed = Utils.CreateEmbed('txadmin_action_revoked', {
-        data.revokedBy or 'Unknown',
-        data.actionType or 'Unknown',
-        data.target or 'Unknown',
-        data.reason or 'No reason provided',
+        eventData.revokedBy or 'Unknown',
+        eventData.actionType or 'Unknown',
+        eventData.target or 'Unknown',
+        eventData.reason or 'No reason provided',
         os.date('%Y-%m-%d %H:%M:%S')
     })
     Utils.SendEmbedToDiscord(embed)
 end)
 
-RegisterNetEvent('txAdmin:events:adminAuth', function(data)
+AddEventHandler('txAdmin:events:adminAuth', function(eventData)
     if not Config.LogTypes.txadmin_admin_auth then return end
     local embed = Utils.CreateEmbed('txadmin_admin_auth', {
-        data.admin or 'Unknown',
-        data.action or 'Unknown',
+        eventData.admin or 'Unknown',
+        eventData.action or 'Unknown',
         os.date('%Y-%m-%d %H:%M:%S')
     })
     Utils.SendEmbedToDiscord(embed)
 end)
 
-RegisterNetEvent('txAdmin:events:adminsUpdated', function(data)
+AddEventHandler('txAdmin:events:adminsUpdated', function(eventData)
     if not Config.LogTypes.txadmin_admins_updated then return end
     local embed = Utils.CreateEmbed('txadmin_admins_updated', {
-        data.updatedBy or 'Unknown',
-        data.action or 'Unknown',
+        eventData.updatedBy or 'Unknown',
+        eventData.action or 'Unknown',
         os.date('%Y-%m-%d %H:%M:%S')
     })
     Utils.SendEmbedToDiscord(embed)
 end)
 
-RegisterNetEvent('txAdmin:events:configChanged', function(data)
+AddEventHandler('txAdmin:events:configChanged', function(eventData)
     if not Config.LogTypes.txadmin_config_changed then return end
     local embed = Utils.CreateEmbed('txadmin_config_changed', {
-        data.changedBy or 'Unknown',
-        data.changes or 'No changes details provided',
+        eventData.changedBy or 'Unknown',
+        eventData.changes or 'No changes details provided',
         os.date('%Y-%m-%d %H:%M:%S')
     })
     Utils.SendEmbedToDiscord(embed)
 end)
 
-RegisterNetEvent('txAdmin:events:consoleCommand', function(data)
+AddEventHandler('txAdmin:events:consoleCommand', function(eventData)
     if not Config.LogTypes.txadmin_console_command then return end
     local embed = Utils.CreateEmbed('txadmin_console_command', {
-        data.admin or 'Unknown',
-        data.command or 'Unknown',
+        eventData.admin or 'Unknown',
+        eventData.command or 'Unknown',
         os.date('%Y-%m-%d %H:%M:%S')
     })
     Utils.SendEmbedToDiscord(embed)
-end) 
+end)

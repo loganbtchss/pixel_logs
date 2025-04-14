@@ -25,16 +25,6 @@ Config.Messages = {
                 value = '```\nName: {player}\nID: {id}\n```',
                 inline = false
             },
-            {
-                name = 'Play Time',
-                value = '{time}',
-                inline = true
-            },
-            {
-                name = 'Reason',
-                value = '{reason}',
-                inline = true
-            }
         }
     },
     ['player_death'] = {
@@ -128,21 +118,16 @@ Config.Messages = {
     },
     ['player_warns'] = {
         title = 'Player Warned',
-        description = '**{player}** has been warned',
+        description = '**{player}** has been warned for the following reason:',
         fields = {
-            {
-                name = 'Player Information',
-                value = '```\nName: {player}\nID: {id}\n```',
-                inline = false
-            },
-            {
-                name = 'Admin',
-                value = '{admin}',
-                inline = true
-            },
             {
                 name = 'Reason',
                 value = '{reason}',
+                inline = false
+            },
+            {
+                name = 'Admin Information',
+                value = '```\nName: {admin}\nID: {admin_id}\n```',
                 inline = false
             }
         }
@@ -453,4 +438,4 @@ Config.Colors = {
     ['player_commands'] = 16776960, -- Yellow
     ['player_connections'] = 255, -- Blue
     ['player_resources'] = 16776960 -- Yellow
-} 
+}
