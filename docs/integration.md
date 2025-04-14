@@ -248,4 +248,4 @@ end)
 5. **Handle Errors Gracefully**
    - Use the CatchError export for error handling
    - Include error details in logs
-   - Don't let logging errors break your resource 
+   - Don't let logging errors break your resource

@@ -74,30 +74,19 @@ AddEventHandler('playerConnecting', function(name, setKickReason, deferrals)
         }
         
         local message = Utils.FormatMessage('player_join', Config.Messages['player_join'].description, data)
-        local embed = {
-            title = Config.Messages['player_join'].title,
-            description = message,
-            color = Config.Colors['player_join'],
-            timestamp = os.date('!%Y-%m-%dT%H:%M:%SZ'),
-            footer = {
-                text = 'Server Logs'
-            },
-            fields = {}
-        }
         
-        -- Add player info fields
-        table.insert(embed.fields, {
-            name = 'Player Information',
-            value = string.format('```\nName: %s\nID: %s\n```', data.player, data.id),
-            inline = false
-        })
+        -- Use the CreateEmbed function for better formatting
+        local embed = Utils.CreateEmbed('player_join', message, source, nil, data)
         
-        -- Add timestamp field
-        table.insert(embed.fields, {
-            name = 'Time',
-            value = data.time,
-            inline = true
-        })
+        -- Add additional fields if needed
+        if embed and embed.fields then
+            -- Add connection time field
+            table.insert(embed.fields, {
+                name = 'Connection Time',
+                value = data.time,
+                inline = true
+            })
+        end
         
         Utils.SendEmbedToDiscord(embed)
     end
@@ -117,36 +106,26 @@ AddEventHandler('playerDropped', function(reason)
         }
         
         local message = Utils.FormatMessage('player_leave', Config.Messages['player_leave'].description, data)
-        local embed = {
-            title = Config.Messages['player_leave'].title,
-            description = message,
-            color = Config.Colors['player_leave'],
-            timestamp = os.date('!%Y-%m-%dT%H:%M:%SZ'),
-            footer = {
-                text = 'Server Logs'
-            },
-            fields = {}
-        }
         
-        -- Add player info fields
-        table.insert(embed.fields, {
-            name = 'Player Information',
-            value = string.format('```\nName: %s\nID: %s\n```', data.player, data.id),
-            inline = false
-        })
+        -- Use the CreateEmbed function for better formatting
+        local embed = Utils.CreateEmbed('player_leave', message, source, nil, data)
         
-        -- Add reason and timestamp fields
-        table.insert(embed.fields, {
-            name = 'Reason',
-            value = data.reason,
-            inline = true
-        })
-        
-        table.insert(embed.fields, {
-            name = 'Time',
-            value = data.time,
-            inline = true
-        })
+        -- Add additional fields if needed
+        if embed and embed.fields then
+            -- Add play time field
+            table.insert(embed.fields, {
+                name = 'Play Time',
+                value = data.time,
+                inline = true
+            })
+            
+            -- Add reason field
+            table.insert(embed.fields, {
+                name = 'Reason',
+                value = data.reason,
+                inline = true
+            })
+        end
         
         Utils.SendEmbedToDiscord(embed)
     end

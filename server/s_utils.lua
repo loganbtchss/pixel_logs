@@ -80,27 +80,40 @@ function Utils.GetPlayerAvatar(source, identifierType, identifier)
     
     if Config.Avatars.Types[identifierType] then
         if identifierType == 'steam' then
+            -- Extract the Steam ID from the identifier
             local steamId = identifier:gsub('steam:', '')
-            avatarUrl = string.format('https://steamcommunity.com/profiles/%s/?xml=1', steamId)
             
-            -- Make HTTP request to get Steam avatar
-            PerformHttpRequest(avatarUrl, function(err, text, headers)
-                if not err and text then
-                    local avatarHash = text:match('<avatarFull>.-steamcommunity.com/public/images/avatars/(.-)</avatarFull>')
-                    if avatarHash then
-                        avatarUrl = string.format('https://steamcommunity.com/public/images/avatars/%s', avatarHash)
-                        avatarCache[cacheKey] = avatarUrl
+            -- Convert Steam Hex to Steam64 ID
+            local steam64 = tonumber(steamId, 16)
+            if steam64 then
+                steam64 = steam64 + 76561197960265728
+                avatarUrl = string.format('https://steamcommunity.com/profiles/%d/?xml=1', steam64)
+                
+                -- Make HTTP request to get Steam avatar
+                PerformHttpRequest(avatarUrl, function(err, text, headers)
+                    if not err and text then
+                        local avatarHash = text:match('<avatarFull>.-steamcommunity.com/public/images/avatars/(.-)</avatarFull>')
+                        if avatarHash then
+                            avatarUrl = string.format('https://steamcommunity.com/public/images/avatars/%s', avatarHash)
+                            avatarCache[cacheKey] = avatarUrl
+                        end
                     end
-                end
-            end, 'GET', '', {})
+                end, 'GET', '', {})
+            end
             
         elseif identifierType == 'discord' then
+            -- Extract the Discord ID from the identifier
             local discordId = identifier:gsub('discord:', '')
-            -- Discord avatars require the actual avatar hash, which we don't have
-            -- We'll use the default avatar for now
-            avatarUrl = string.format('https://cdn.discordapp.com/embed/avatars/0.png')
+            
+            -- Use Discord's default avatar with a random color (0-4)
+            local colorIndex = math.random(0, 4)
+            avatarUrl = string.format('https://cdn.discordapp.com/embed/avatars/%d.png', colorIndex)
+            
+            -- Note: To get the actual Discord avatar, we would need to use the Discord API
+            -- which requires a bot token and additional setup
             
         elseif identifierType == 'fivem' then
+            -- Extract the FiveM ID from the identifier
             local fivemId = identifier:gsub('fivem:', '')
             avatarUrl = string.format('https://forum.cfx.re/user_avatar/forum.cfx.re/%s/240.png', fivemId)
         end

@@ -1,0 +1,20 @@
+# Compiled Lua files
+*.luac
+
+# Development Configs
+configs/pixel_dev.cfg
+./configs/pixel_dev.cfg
+
+# Backup files
+*.bak
+*.tmp
+*.swp
+
+# Logs and temporary files
+logs/
+temp/
+*.log
+
+# IDE-specific files
+.vscode/
+.idea/

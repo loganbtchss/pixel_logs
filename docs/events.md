@@ -602,4 +602,10 @@ Config.Colors = {
     ['kick'] = 16711680, -- Red
     ['warn'] = 16776960 -- Yellow
 }
-``` 
+```
+
+## Related Documentation
+
+- [Customization Guide](customization.md) - Learn how to customize message templates and colors
+- [Integration Guide](integration.md) - See examples of integrating events with other resources
+- [Debug Guide](debug.md) - Use the debug system to troubleshoot event issues

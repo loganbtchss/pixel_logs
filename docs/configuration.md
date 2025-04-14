@@ -207,4 +207,10 @@ Config.Messages = {
 }
 ```
 
-For a complete list of available placeholders, see the [Message Templates Guide](message-templates.md). 
+For a complete list of available placeholders, see the [Customization Guide](customization.md).
+
+## Related Documentation
+
+- [Customization Guide](customization.md) - Detailed message template customization
+- [Events Guide](events.md) - Events that can be configured
+- [Convars Guide](convars.md) - Configuration through convars

@@ -204,4 +204,10 @@ Be aware of Discord's embed limitations:
 - Field name: Maximum 256 characters
 - Field value: Maximum 1024 characters
 - Total embed size: Maximum 6000 characters
-- Maximum 25 fields per embed 
+- Maximum 25 fields per embed
+
+## Related Documentation
+
+- [Configuration Guide](configuration.md) - Configure appearance settings
+- [Events Guide](events.md) - Learn about events that can be customized
+- [Integration Guide](integration.md) - Examples of custom logs in other resources

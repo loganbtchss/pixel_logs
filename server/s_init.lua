@@ -32,7 +32,7 @@ end
 -- Function to check required convars
 local function CheckRequiredConvars()
     local requiredConvars = {
-        {name = 'pixel_logs_webhook', description = 'Discord webhook URL'}
+        {name = 'pxl_webhook', description = 'Discord webhook URL'}
     }
     
     local missingConvars = {}

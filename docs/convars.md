@@ -253,4 +253,10 @@ local debugEnabled = GetConvar('pixel_logs_debug', 'false') == 'true'
 
 5. **Regular Maintenance**
    - Review your convar settings periodically
-   - Update settings as needed when updating the resource 
+   - Update settings as needed when updating the resource
+
+## Related Documentation
+
+- [Configuration Guide](configuration.md) - Detailed configuration instructions
+- [Installation Guide](installation.md) - Setting up convars during installation
+- [Troubleshooting Guide](troubleshooting.md) - Solving convar-related issues

@@ -443,8 +443,8 @@ Config.Messages = {
 
 -- Set Colors in Config
 Config.Colors = {
-    ['player_join'] = 65280, -- Green
-    ['player_leave'] = 16711680, -- Red
+    ['player_join'] = 5763719, -- Nice blue color
+    ['player_leave'] = 15158332, -- Nice red color
     ['player_death'] = 16711680, -- Red
     ['player_chat'] = 16776960, -- Yellow
     ['player_bans'] = 16711680, -- Red

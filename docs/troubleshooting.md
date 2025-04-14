@@ -93,4 +93,4 @@ If you're still experiencing issues after trying these solutions:
 
 1. Check the [GitHub Issues](https://github.com/ByteBrushStudios/pixel_logs/issues) for similar problems
 2. Join our [Discord Server](https://discord.gg/Vv2bdC44Ge) for direct support
-3. Enable debug mode and share the logs with our support team 
+3. Enable debug mode and share the logs with our support team
